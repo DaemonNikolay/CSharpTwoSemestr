@@ -28,52 +28,51 @@ namespace ZeroCDN_Client
 
         private void SendDataAuth_Click(object sender, RoutedEventArgs e)
         {
-            String login = InputAuthLogin.Text;
-            String password = InputAuthPassword.Text;
 
-            HttpWebRequest query = (HttpWebRequest)WebRequest.Create("http://mng.zerocdn.com/api/v2/users/files.json?username=" + login + "&api_key=" + password);
-            query.AllowAutoRedirect = false;
-            try
             {
+                this.Visibility = System.Windows.Visibility.Collapsed;
 
-                HttpWebResponse response = (HttpWebResponse)query.GetResponse();
-                if (response.StatusCode == HttpStatusCode.OK)
+                WordkingWindow wind = new WordkingWindow();
+                wind.Closed += (sender2, e2) =>
                 {
-                    MessageBox.Show("Авторизация прошла успешно!");
-                }
+                    this.Close();
+                };
 
-                response.Close();
-            }
-            catch (WebException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"The following Exception was raised : {ex.Message}");
+                wind.ShowDialog();
             }
 
-            //HttpWebRequest queryTwo = (HttpWebRequest)WebRequest.Create("http://mng.zerocdn.com/api/v2/users/folders.json");
-            //queryTwo.AllowAutoRedirect = false;
-            //CookieContainer cook = new CookieContainer();
-            //cook.Add(response.Cookies);
-            //queryTwo.CookieContainer = cook;
+            //String login = InputAuthLogin.Text;
+            //String password = InputAuthPassword.Text;
 
-            //MessageBox.Show("" + queryTwo.CookieContainer);
-            //HttpWebResponse responseTwo = (HttpWebResponse)queryTwo.GetResponse();
-
-            //using (Stream stream = responseTwo.GetResponseStream())
+            //HttpWebRequest query = (HttpWebRequest)WebRequest.Create("http://mng.zerocdn.com/api/v2/users/files.json?username=" + login + "&api_key=" + password);
+            //query.AllowAutoRedirect = false;
+            //try
             //{
-            //    using (StreamReader reader = new StreamReader(stream))
+            //    HttpWebResponse response = (HttpWebResponse)query.GetResponse();
+
+            //    if (response.StatusCode == HttpStatusCode.OK)
             //    {
-            //        string line = "";
-            //        while ((line = reader.ReadLine()) != null)
+            //        this.Visibility = System.Windows.Visibility.Collapsed;
+
+            //        WordkingWindow wind = new WordkingWindow();
+            //        wind.Closed += (sender2, e2) =>
             //        {
-            //            MessageBox.Show("Результат: " + line);
-            //        }
+            //            this.Close();
+            //        };
+
+            //        wind.ShowDialog();
             //    }
+
+            //    response.Close();
             //}
-            //responseTwo.Close();
+            //catch (WebException ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"The following Exception was raised : {ex.Message}");
+            //}
         }
     }
 }
