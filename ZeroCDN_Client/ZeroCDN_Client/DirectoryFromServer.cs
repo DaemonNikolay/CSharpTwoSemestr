@@ -8,8 +8,47 @@ namespace ZeroCDN_Client
 {
     class DirectoryFromServer
     {
-        public String nameDirectory;
-        public String dateCreate;
-        public String directLink;
+        private String nameDirectory;
+        private String dateCreate;
+        private String directLink;
+
+        public string NameDirectory
+        {
+            get
+            {
+                return nameDirectory;
+            }
+
+            set
+            {
+                nameDirectory = value;
+            }
+        }
+
+        public string DateCreate
+        {
+            get
+            {
+                return dateCreate;
+            }
+
+            set
+            {
+                dateCreate = value;
+            }
+        }
+
+        public string DirectLink
+        {
+            get
+            {
+                return directLink;
+            }
+
+            set
+            {
+                directLink = value;
+            }
+        }
     }
 }

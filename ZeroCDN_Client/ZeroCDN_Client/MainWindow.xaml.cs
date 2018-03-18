@@ -29,50 +29,50 @@ namespace ZeroCDN_Client
         private void SendDataAuth_Click(object sender, RoutedEventArgs e)
         {
 
-            {
-                this.Visibility = System.Windows.Visibility.Collapsed;
-
-                WordkingWindow wind = new WordkingWindow();
-                wind.Closed += (sender2, e2) =>
-                {
-                    this.Close();
-                };
-
-                wind.ShowDialog();
-            }
-
-            //String login = InputAuthLogin.Text;
-            //String password = InputAuthPassword.Text;
-
-            //HttpWebRequest query = (HttpWebRequest)WebRequest.Create("http://mng.zerocdn.com/api/v2/users/files.json?username=" + login + "&api_key=" + password);
-            //query.AllowAutoRedirect = false;
-            //try
             //{
-            //    HttpWebResponse response = (HttpWebResponse)query.GetResponse();
+            //    this.Visibility = System.Windows.Visibility.Collapsed;
 
-            //    if (response.StatusCode == HttpStatusCode.OK)
+            //    WordkingWindow wind = new WordkingWindow();
+            //    wind.Closed += (sender2, e2) =>
             //    {
-            //        this.Visibility = System.Windows.Visibility.Collapsed;
+            //        this.Close();
+            //    };
 
-            //        WordkingWindow wind = new WordkingWindow();
-            //        wind.Closed += (sender2, e2) =>
-            //        {
-            //            this.Close();
-            //        };
+            //    wind.ShowDialog();
+            //}
 
-            //        wind.ShowDialog();
-            //    }
+            String login = InputAuthLogin.Text;
+            String password = InputAuthPassword.Text;
 
-            //    response.Close();
-            //}
-            //catch (WebException ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"The following Exception was raised : {ex.Message}");
-            //}
+            HttpWebRequest query = (HttpWebRequest)WebRequest.Create("http://mng.zerocdn.com/api/v2/users/files.json?username=" + login + "&api_key=" + password);
+            query.AllowAutoRedirect = false;
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)query.GetResponse();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    this.Visibility = Visibility.Collapsed;
+
+                    WordkingWindow wind = new WordkingWindow(login, password);
+                    wind.Closed += (sender2, e2) =>
+                    {
+                        this.Close();
+                    };
+
+                    wind.ShowDialog();
+                }
+
+                response.Close();
+            }
+            catch (WebException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"The following Exception was raised : {ex.Message}");
+            }
         }
     }
 }
