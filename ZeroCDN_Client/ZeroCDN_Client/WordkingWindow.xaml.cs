@@ -38,54 +38,57 @@ namespace ZeroCDN_Client
         {
             HttpWebRequest query = (HttpWebRequest)WebRequest.Create("http://mng.zerocdn.com/api/v2/users/folders.json?username=" + login + "&api_key=" + password);
             query.AllowAutoRedirect = false;
-            //try
-            //{
-            HttpWebResponse response = (HttpWebResponse)query.GetResponse();
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                HttpWebResponse response = (HttpWebResponse)query.GetResponse();
 
-                var jObject = JObject.Parse(reader.ReadToEnd());
-                //MessageBox.Show("" + jObject);
-
-                List<DirectoryFromServer> listDirectoryServer = new List<DirectoryFromServer>();
-                //listDirectoryServer.Add(new DirectoryFromServer { NameDirectory = "Первая", DateCreate = "2018", DirectLink = "https://fdsfds.com" });
-
-                foreach (var obj in jObject["objects"])
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    listDirectoryServer.Add(new DirectoryFromServer { NameDirectory = (String)obj["name"], DateCreate = (String)obj["created"], DirectLink = "http://tyr-tyr.com" });
+                    StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+
+                    var jObject = JObject.Parse(reader.ReadToEnd());
+
+                    TableDirectoriesServer.AutoGenerateColumns = false;
+                    TableDirectoriesServer.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Название",
+                        Binding = new Binding("NameDirectory"),
+                    });
+                    TableDirectoriesServer.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Дата создания",
+                        Binding = new Binding("DateCreate"),
+                    });
+                    TableDirectoriesServer.Columns.Add(new DataGridTextColumn
+                    {
+                        Header = "Ссылка",
+                        Binding = new Binding("DirectLink"),
+                    });
+
+                    List<DirectoryFromServer> listDirectoryServer = new List<DirectoryFromServer>();
+                    foreach (var obj in jObject["objects"])
+                    {
+                        listDirectoryServer.Add(new DirectoryFromServer { NameDirectory = (String)obj["name"], DateCreate = (String)obj["created"], DirectLink = "http://tyr-tyr.com" });
+                    }
+
+                    TableDirectoriesServer.ItemsSource = listDirectoryServer;
                 }
-                //var names = jObject["objects"];
 
-                //MessageBox.Show("" + names);
-                TableDirectoriesServer.ItemsSource = listDirectoryServer;
+                response.Close();
             }
-
-            response.Close();
-            //}
-            //catch (WebException ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"The following Exception was raised : {ex.Message}");
-            //}
+            catch (WebException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"The following Exception was raised : {ex.Message}");
+            }
         }
 
         private void TableDirectoriesServer_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            //List<DirectoryFromServer> listDrectoryServer = new List<DirectoryFromServer>
-            //{
-            //    new DirectoryFromServer { nameDirectory = "Имя первое", dateCreate="Год 2018", directLink="http://zeroCDN.com" },
-            //    new DirectoryFromServer { nameDirectory = "Имя первое", dateCreate="Год 2018", directLink="http://zeroCDN.com" },
-            //};
-
-            //MessageBox.Show("" + listDrectoryServer);
-
-            //TableDirectoriesServer.ItemsSource = listDrectoryServer;
         }
 
 
