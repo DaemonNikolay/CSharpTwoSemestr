@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZeroCDN_Client"
         mc:Ignorable="d"
-        Title="WordkingWindow" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
-    <Grid>
-        <DataGrid x:Name="TableDirectoriesServer" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="239" Width="384" SelectionChanged="TableDirectoriesServer_SelectionChanged"/>
+        Title="Управление файлами ZeroCDN" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Width="1000" Height="804" Icon="Image/favicon.ico" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Grid Margin="10,10,3.6,2.4">
+        <Grid.Background>
+            <ImageBrush ImageSource="Image/background.PNG" TileMode="FlipX" Opacity="0.4"/>
+        </Grid.Background>
+        <DataGrid x:Name="TableDirectoriesServer" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Height="345" Width="384" SelectionChanged="TableDirectoriesServer_SelectionChanged"/>
+        <TextBlock x:Name="textBlockTableDirectoryServer" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Директории на сервере" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
 
     </Grid>
 </Window>
