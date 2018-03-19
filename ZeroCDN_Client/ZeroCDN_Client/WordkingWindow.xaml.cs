@@ -91,6 +91,17 @@ namespace ZeroCDN_Client
 
         }
 
+        private void CreateDirecoryToServer_Click(object sender, RoutedEventArgs e)
+        {
+            NameForDirectory windowName = new NameForDirectory();
+            if (windowName.ShowDialog() == true)
+            {
 
+            }
+            else
+            {
+                MessageBox.Show("Ошибка");
+            }
+        }
     }
 }
