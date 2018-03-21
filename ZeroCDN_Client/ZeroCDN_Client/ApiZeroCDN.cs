@@ -131,6 +131,14 @@ namespace ZeroCDN_Client
                 return null;
             }
 
+            foreach (var element in ListDirectories())
+            {
+                if(element.NameDirectory == nameNewDirectory)
+                {
+                    return "Directory found";
+                }
+            }
+
             WebClient client = new WebClient();
 
             var data = new NameValueCollection
@@ -139,17 +147,7 @@ namespace ZeroCDN_Client
                     { "name", nameNewDirectory },
                 };
 
-            if (typeAuth == typeAuthorization.LoginAndAPiKey)
-            {
-                return AnswerIsCreatingDirectory(data, client);
-            }
-
-            if (typeAuth == typeAuthorization.LoginAndPassword)
-            {
-                return AnswerIsCreatingDirectory(data, client);
-            }
-
-            return "";
+            return AnswerIsCreatingDirectory(data, client);
         }
 
         public static String DeleteDirectory()
@@ -171,7 +169,14 @@ namespace ZeroCDN_Client
         /// Дополнительные методы для взаимодействий
         /// </summary>
 
-        public static void RenewedListDirectories()
+        private static List<DirectoryFromServer> ListDirectories()
+        {
+            UpdateListDirectories();
+
+            return existsDirectories;
+        }
+
+        private static void UpdateListDirectories()
         {
             var newDirectories = WriteExistingDirectories();
 
@@ -192,9 +197,15 @@ namespace ZeroCDN_Client
 
         private static String AnswerIsCreatingDirectory(NameValueCollection data, WebClient client)
         {
+            if (typeAuth.Equals(null))
+            {
+                return null;
+            }
+
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileWithKey : urlFileWithPassword;
             try
             {
-                var response = client.UploadValues(urlDirectoryWithPassword, data);
+                var response = client.UploadValues(url, data);
 
                 return Encoding.ASCII.GetString(response);
             }
