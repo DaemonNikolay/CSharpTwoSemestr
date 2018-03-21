@@ -19,13 +19,14 @@ namespace ZeroCDN_Client
         private static String postfixUsername = "?username=";
         private static String postfixApiKey = "&api_key=";
         private static bool isAithorised = false;
-        private static
+        private static typeAuthorization typeAuth;
         private static List<String> existsDirectories = new List<string>();
 
         public static String AuthLoginPassword(String username, String password)
         {
             userName = username;
             pasOrKey = password;
+            typeAuth = typeAuthorization.LoginAndPassword;
 
             WebClient client = new WebClient();
 
@@ -60,6 +61,7 @@ namespace ZeroCDN_Client
         {
             userName = username;
             pasOrKey = apiKey;
+            typeAuth = typeAuthorization.LoginAndAPiKey;
 
             WebClient client = new WebClient();
 

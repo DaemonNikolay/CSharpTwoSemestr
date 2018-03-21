@@ -59,7 +59,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ApiZeroCDN.cs" />
     <Compile Include="DirectoryFromServer.cs" />
+    <Compile Include="NameForDirectory.xaml.cs">
+      <DependentUpon>NameForDirectory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WebClientEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WordkingWindow.xaml.cs">
       <DependentUpon>WordkingWindow.xaml</DependentUpon>
     </Compile>
@@ -75,6 +82,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NameForDirectory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WordkingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -113,6 +124,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Image\background.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\CreateDirectory.png" />
+    <Resource Include="Image\ToolBar\DeleteDirectory.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\SettingsDirectory.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
