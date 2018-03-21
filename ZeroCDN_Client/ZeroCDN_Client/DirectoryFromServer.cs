@@ -10,7 +10,7 @@ namespace ZeroCDN_Client
     {
         private String nameDirectory;
         private String dateCreate;
-        private String directLink;
+        //private String directLink;
 
         public string NameDirectory
         {
@@ -38,17 +38,17 @@ namespace ZeroCDN_Client
             }
         }
 
-        public string DirectLink
-        {
-            get
-            {
-                return directLink;
-            }
+        //public string DirectLink
+        //{
+        //    get
+        //    {
+        //        return directLink;
+        //    }
 
-            set
-            {
-                directLink = value;
-            }
-        }
+        //    set
+        //    {
+        //        directLink = value;
+        //    }
+        //}
     }
 }

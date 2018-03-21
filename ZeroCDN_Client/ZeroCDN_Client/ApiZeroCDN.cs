@@ -12,21 +12,38 @@ namespace ZeroCDN_Client
 {
     class ApiZeroCDN
     {
+        /// <summary>
+        /// Поля
+        /// </summary>
+
         private static String userName;
         private static String pasOrKey;
+
         private static String urlFile = "http://mng.zerocdn.com/api/v2/users/files.json";
-        private static String urlkDirectory = "http://mng.zerocdn.com/api/v2/users/folders.json";
-        private static String postfixUsername = "?username=";
-        private static String postfixApiKey = "&api_key=";
-        private static bool isAithorised = false;
+        private static String urlDirectory = "http://mng.zerocdn.com/api/v2/users/folders.json";
+        private static String urlFileWithKey = urlFile + "?username=" + userName + "&api_key=" + pasOrKey;
+        private static String urlDirectoryWithKey = urlDirectory + "?username=" + userName + "&api_key=" + pasOrKey;
+        private static String urlFileWithPassword = urlFile;
+        private static String urlDirectoryWithPassword = urlDirectory;
+
         private static typeAuthorization typeAuth;
-        private static List<String> existsDirectories = new List<string>();
+        private enum typeAuthorization
+        {
+            LoginAndAPiKey,
+            LoginAndPassword
+        }
+
+        private static List<DirectoryFromServer> existsDirectories = new List<DirectoryFromServer>();
+
+        /// <summary>
+        /// Авторизация
+        /// </summary>
 
         public static String AuthLoginPassword(String username, String password)
         {
             userName = username;
             pasOrKey = password;
-            typeAuth = typeAuthorization.LoginAndPassword;
+
 
             WebClient client = new WebClient();
 
@@ -37,8 +54,8 @@ namespace ZeroCDN_Client
 
             try
             {
-                StreamReader reader = new StreamReader(client.DownloadString(urlFile));
-                isAithorised = true;
+                StreamReader reader = new StreamReader(client.DownloadString(urlFileWithPassword));
+                typeAuth = typeAuthorization.LoginAndPassword;
 
                 return reader.ReadToEnd();
             }
@@ -61,16 +78,15 @@ namespace ZeroCDN_Client
         {
             userName = username;
             pasOrKey = apiKey;
-            typeAuth = typeAuthorization.LoginAndAPiKey;
+
 
             WebClient client = new WebClient();
 
             try
             {
-                var respone = client.DownloadString(urlFile + postfixUsername + userName + postfixApiKey + pasOrKey);
-                StreamReader reader = new StreamReader(respone);
-
-                isAithorised = true;
+                var response = client.DownloadString(urlFileWithKey);
+                StreamReader reader = new StreamReader(response);
+                typeAuth = typeAuthorization.LoginAndAPiKey;
 
                 return reader.ReadToEnd();
             }
@@ -79,6 +95,10 @@ namespace ZeroCDN_Client
                 return GetHttpStatusCode(ex);
             }
         }
+
+        /// <summary>
+        /// Взаимодействие с файлами
+        /// </summary>
 
         public static String AddFiles()
         {
@@ -100,32 +120,36 @@ namespace ZeroCDN_Client
             return "-1";
         }
 
+        /// <summary>
+        /// Взаимодействие с директориями
+        /// </summary>
+
         public static String CreateDirectory(String nameNewDirectory)
         {
-            if (nameNewDirectory.Length == 0 || isAithorised == false)
+            if (nameNewDirectory.Length == 0 || typeAuth.ToString().Length == 0)
             {
                 return null;
             }
 
-
             WebClient client = new WebClient();
 
             var data = new NameValueCollection
-            {
-                { "Content-Type", "application/json" },
-                { "name", nameNewDirectory },
-            };
+                {
+                    { "Content-Type", "application/json" },
+                    { "name", nameNewDirectory },
+                };
 
-            try
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
             {
-                var response = client.UploadValues(urlFile + "?username=" + username + "&api_key=" + key, data);
-            }
-            catch (WebException ex)
-            {
-                return GetHttpStatusCode(ex);
+                return AnswerIsCreatingDirectory(data, client);
             }
 
-            return "-1";
+            if (typeAuth == typeAuthorization.LoginAndPassword)
+            {
+                return AnswerIsCreatingDirectory(data, client);
+            }
+
+            return "";
         }
 
         public static String DeleteDirectory()
@@ -143,10 +167,41 @@ namespace ZeroCDN_Client
             return "-1";
         }
 
-        enum typeAuthorization
+        /// <summary>
+        /// Дополнительные методы для взаимодействий
+        /// </summary>
+
+        public static void RenewedListDirectories()
         {
-            LoginAndAPiKey,
-            LoginAndPassword
+            var newDirectories = WriteExistingDirectories();
+
+            if (newDirectories != null)
+            {
+                existsDirectories.Clear();
+
+                foreach (var element in newDirectories)
+                {
+                    existsDirectories.Add(new DirectoryFromServer
+                    {
+                        NameDirectory = element.NameDirectory,
+                        DateCreate = element.DateCreate
+                    });
+                }
+            }
+        }
+
+        private static String AnswerIsCreatingDirectory(NameValueCollection data, WebClient client)
+        {
+            try
+            {
+                var response = client.UploadValues(urlDirectoryWithPassword, data);
+
+                return Encoding.ASCII.GetString(response);
+            }
+            catch (WebException ex)
+            {
+                return GetHttpStatusCode(ex);
+            }
         }
 
         private static String GetHttpStatusCode(WebException ex)
@@ -163,43 +218,35 @@ namespace ZeroCDN_Client
             return ex.Status.ToString();
         }
 
-        private static void WriteExistingDirectories()
+        private static List<DirectoryFromServer> WriteExistingDirectories()
         {
+            String url = "";
+
+            if (typeAuth.Equals(null))
+            {
+                return null;
+            }
+
+            url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey : urlFileWithPassword;
+
             try
             {
                 var client = new WebClient();
-                var text = client.DownloadString("http://example.com/page.html");
-            }
-            catch ()
-            {
+                var response = client.DownloadString(url);
+                var jObject = JObject.Parse(response);
 
-            }
-
-
-
-            HttpWebRequest query = (HttpWebRequest)WebRequest.Create("http://mng.zerocdn.com/api/v2/users/folders.json?username=" + login + "&api_key=" + password);
-            query.AllowAutoRedirect = false;
-            try
-            {
-                HttpWebResponse response = (HttpWebResponse)query.GetResponse();
-
-                if (response.StatusCode == HttpStatusCode.OK)
+                List<DirectoryFromServer> directoriesFromServer = new List<DirectoryFromServer>();
+                foreach (var obj in jObject["objects"])
                 {
-                    StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-
-                    var jObject = JObject.Parse(reader.ReadToEnd());
-
-                    List<DirectoryFromServer> listDirectoryServer = new List<DirectoryFromServer>();
-                    foreach (var obj in jObject["objects"])
-                    {
-                        listDirectoryServer.Add(new DirectoryFromServer { NameDirectory = (String)obj["name"], DateCreate = (String)obj["created"], DirectLink = "http://tyr-tyr.com" });
-                    }
+                    directoriesFromServer.Add(new DirectoryFromServer { NameDirectory = (String)obj["name"], DateCreate = (String)obj["created"] });
                 }
 
-                response.Close();
-
-
-                existsDirectories.Add();
+                return directoriesFromServer;
             }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
-    }
+}
