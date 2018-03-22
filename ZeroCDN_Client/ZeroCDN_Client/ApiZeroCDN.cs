@@ -55,7 +55,6 @@ namespace ZeroCDN_Client
             userName = username;
             pasOrKey = password;
 
-
             WebClient client = new WebClient();
 
             client.Credentials = new NetworkCredential(userName, pasOrKey);
@@ -90,13 +89,13 @@ namespace ZeroCDN_Client
             userName = username;
             pasOrKey = apiKey;
 
-
             WebClient client = new WebClient();
 
             try
             {
                 var response = client.DownloadString(urlFileWithKey);
                 StreamReader reader = new StreamReader(response);
+
                 typeAuth = typeAuthorization.LoginAndAPiKey;
 
                 return reader.ReadToEnd();
@@ -168,7 +167,6 @@ namespace ZeroCDN_Client
             }
 
             WebClient client = new WebClient();
-
             var data = new NameValueCollection
                 {
                     { "Content-Type", "application/json" },
@@ -208,12 +206,12 @@ namespace ZeroCDN_Client
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryIdWithKey : urlDirectoryIdWithPassword;
             WebClient client = new WebClient();
 
-
             var data = new NameValueCollection
                 {
                     { "Content-Type", "application/json" },
                     { "name", newNameDirectory },
                 };
+
             try
             {
                 var response = client.UploadValues(url, data);
@@ -240,7 +238,7 @@ namespace ZeroCDN_Client
             UpdateListDirectories();
 
             return existsDirectories;
-        }
+        }  // Получение списка директорий 
 
         private static void UpdateListDirectories()
         {
@@ -259,16 +257,12 @@ namespace ZeroCDN_Client
                     });
                 }
             }
-        }
+        }  // Обновление списка директорий
 
         private static String AnswerIsCreatingDirectory(NameValueCollection data, WebClient client)
         {
-            if (typeAuth.Equals(null))
-            {
-                return null;
-            }
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey : urlDirectoryWithPassword;
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileWithKey : urlFileWithPassword;
             try
             {
                 var response = client.UploadValues(url, data);
@@ -279,7 +273,7 @@ namespace ZeroCDN_Client
             {
                 return GetHttpStatusCode(ex);
             }
-        }
+        }  // Ответ сервера на создание директории
 
         private static String GetHttpStatusCode(WebException ex)
         {
@@ -293,7 +287,7 @@ namespace ZeroCDN_Client
             }
 
             return ex.Status.ToString();
-        }
+        }  // Возврат HTTP статуса при обработке Exception в запросе
 
         private static List<DirectoryFromServer> WriteExistingDirectories()
         {
@@ -304,7 +298,7 @@ namespace ZeroCDN_Client
                 return null;
             }
 
-            url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey : urlFileWithPassword;
+            url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey : urlDirectoryWithPassword;
 
             try
             {
@@ -324,6 +318,6 @@ namespace ZeroCDN_Client
             {
                 return null;
             }
-        }
+        }  // Записывание имеющихся директорий на сервере
     }
 }
