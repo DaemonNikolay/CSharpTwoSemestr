@@ -18,13 +18,24 @@ namespace ZeroCDN_Client
 
         private static String userName;
         private static String pasOrKey;
+        private static String id;
 
-        private static String urlFile = "http://mng.zerocdn.com/api/v2/users/files.json";
-        private static String urlDirectory = "http://mng.zerocdn.com/api/v2/users/folders.json";
-        private static String urlFileWithKey = urlFile + "?username=" + userName + "&api_key=" + pasOrKey;
-        private static String urlDirectoryWithKey = urlDirectory + "?username=" + userName + "&api_key=" + pasOrKey;
-        private static String urlFileWithPassword = urlFile;
-        private static String urlDirectoryWithPassword = urlDirectory;
+        private static String url = "http://mng.zerocdn.com/api/v2/users/";
+
+        private static String postfixUsers = "users.json";
+        private static String postfixDirectories = "folders.json";
+
+        private static String urlDirectoryIdWithPassword = url + postfixDirectories + id + ".json" + "?username=" + userName + "&api_key=" + pasOrKey;
+        private static String urlDirectoryIdWithKey = url + postfixDirectories + id + ".json";
+
+        private static String urlFileIdWithKey = url + "files/" + id + ".json" + "?username=" + userName + "&api_key=" + pasOrKey;
+        private static String urlFileIdWithPassword = url + "files/" + id + ".json";
+
+        private static String urlFileWithKey = url + postfixUsers + "?username=" + userName + "&api_key=" + pasOrKey;
+        private static String urlDirectoryWithKey = url + postfixDirectories + "?username=" + userName + "&api_key=" + pasOrKey;
+
+        private static String urlFileWithPassword = url + postfixDirectories;
+        private static String urlDirectoryWithPassword = url + postfixUsers;
 
         private static typeAuthorization typeAuth;
         private enum typeAuthorization
@@ -112,7 +123,24 @@ namespace ZeroCDN_Client
 
         public static String DeleteFiles()
         {
-            return "-1";
+            if (typeAuth.Equals(null) || id == null)
+            {
+                return null;
+            }
+
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileIdWithKey : urlFileIdWithPassword;
+            WebClient client = new WebClient();
+
+            try
+            {
+                var deleteFile = client.UploadValues(url, "DELETE", new NameValueCollection());
+
+                return Encoding.ASCII.GetString(deleteFile);
+            }
+            catch (WebException ex)
+            {
+                return GetHttpStatusCode(ex);
+            }
         }
 
         public static String ListFiles()
@@ -133,7 +161,7 @@ namespace ZeroCDN_Client
 
             foreach (var element in ListDirectories())
             {
-                if(element.NameDirectory == nameNewDirectory)
+                if (element.NameDirectory == nameNewDirectory)
                 {
                     return "Directory found";
                 }
@@ -152,12 +180,50 @@ namespace ZeroCDN_Client
 
         public static String DeleteDirectory()
         {
-            return "-1";
+            if (typeAuth.Equals(null) || id == null)
+            {
+                return null;
+            }
+
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryIdWithKey : urlDirectoryIdWithPassword;
+            WebClient client = new WebClient();
+
+            var deleteDirectory = client.UploadString(url, "DELETE", "");
+
+            return deleteDirectory;
         }
 
         public static String MovingFileToDirectory()
         {
             return "-1";
+        }
+
+        public static String RenameDirectory(String newNameDirectory)
+        {
+            if (typeAuth.Equals(null) || id == null)
+            {
+                return null;
+            }
+
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryIdWithKey : urlDirectoryIdWithPassword;
+            WebClient client = new WebClient();
+
+
+            var data = new NameValueCollection
+                {
+                    { "Content-Type", "application/json" },
+                    { "name", newNameDirectory },
+                };
+            try
+            {
+                var response = client.UploadValues(url, data);
+
+                return Encoding.ASCII.GetString(response);
+            }
+            catch (WebException ex)
+            {
+                return GetHttpStatusCode(ex);
+            }
         }
 
         public static String LoadFileToDirectory()
