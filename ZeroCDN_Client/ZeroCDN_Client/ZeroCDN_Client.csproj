@@ -61,6 +61,7 @@
     </ApplicationDefinition>
     <Compile Include="ApiZeroCDN.cs" />
     <Compile Include="DirectoryFromServer.cs" />
+    <Compile Include="FilesFromDirectory.cs" />
     <Compile Include="NameForDirectory.xaml.cs">
       <DependentUpon>NameForDirectory.xaml</DependentUpon>
     </Compile>

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -46,6 +47,7 @@ namespace ZeroCDN_Client
         private static typeAuthorization typeAuth;
 
         private static List<DirectoryFromServer> existsDirectories = new List<DirectoryFromServer>();
+        private static List<FilesFromDirectory> existsFiles = new List<FilesFromDirectory>();
 
         /// <summary>
         /// Авторизация
@@ -148,6 +150,11 @@ namespace ZeroCDN_Client
             }
         }
 
+        public static String LoadFileToDirectoryOnLink()
+        {
+            return "-1";
+        }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
+
         public static String RenameFile(String newNameFile)
         {
             if (typeAuth.Equals(null))
@@ -174,19 +181,9 @@ namespace ZeroCDN_Client
 
             idToServer = id.ToString();
 
-            if (IsExistFileId())
-            {
-                return "-1";
-            }
-
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileIdWithKey : urlFileIdWithPassword;
-           
-            return Delete(url, id);
-        }
 
-        public static String ListFiles()
-        {
-            return "-1";
+            return Delete(url, id);
         }
 
         /// <summary>
@@ -200,7 +197,7 @@ namespace ZeroCDN_Client
                 return null;
             }
 
-            foreach (var element in ListDirectories())
+            foreach (var element in GetListDirectories())
             {
                 if (element.NameDirectory == nameNewDirectory)
                 {
@@ -237,10 +234,14 @@ namespace ZeroCDN_Client
             return Delete(url, id);
         }
 
-        public static String MovingFileToDirectory()
+        public static String MovingDirectory()
         {
+
+
+
+
             return "-1";
-        }
+        }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
 
         public static String RenameDirectory(String newNameDirectory)
         {
@@ -309,7 +310,7 @@ namespace ZeroCDN_Client
 
         private static bool IsExistDirectoryId()
         {
-            foreach (var element in ListDirectories())
+            foreach (var element in GetListDirectories())
             {
                 if (element.Id == idToServer)
                 {
@@ -322,7 +323,7 @@ namespace ZeroCDN_Client
 
         private static bool IsExistDirectoryName(String newNameDirectory)
         {
-            foreach (var element in ListDirectories())
+            foreach (var element in GetListDirectories())
             {
                 if (element.NameDirectory == newNameDirectory)
                 {
@@ -333,17 +334,7 @@ namespace ZeroCDN_Client
             return false;
         }  // Есть ли директория с таким именем
 
-        private static bool IsExistFileId()  // Требуется реализация
-        {
-            return true;
-        }
-
-        private static bool IsExistFileName(String name)  // Требуется реализация
-        {
-            return true;
-        }
-
-        private static List<DirectoryFromServer> ListDirectories()
+        private static List<DirectoryFromServer> GetListDirectories()
         {
             UpdateListDirectories();
 
@@ -372,14 +363,12 @@ namespace ZeroCDN_Client
 
         private static List<DirectoryFromServer> WriteExistingDirectories()
         {
-            String url = "";
-
             if (typeAuth.Equals(null))
             {
                 return null;
             }
 
-            url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey : urlDirectoryWithPassword;
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey : urlDirectoryWithPassword;
 
             try
             {
@@ -405,6 +394,69 @@ namespace ZeroCDN_Client
                 return null;
             }
         }  // Записывание имеющихся директорий на сервере
+
+        private static List<FilesFromDirectory> GetListFiles()
+        {
+            UpdateListFiles();
+
+            return existsFiles;
+        }  // Получение списка файлов в директории
+
+        private static void UpdateListFiles()
+        {
+            var newListFiles = WriteExistingFiles();
+
+            if (newListFiles != null)
+            {
+                existsFiles.Clear();
+
+                foreach (var element in newListFiles)
+                {
+                    existsFiles.Add(new FilesFromDirectory
+                    {
+                        Id = element.Id,
+                        Name = element.Name,
+                        DateCreate = element.DateCreate,
+                        DirectoryId = element.DirectoryId
+                    });
+                }
+            }
+        }  // Обновление списка файлов в директории
+
+        private static List<FilesFromDirectory> WriteExistingFiles()
+        {
+            if (typeAuth.Equals(null))
+            {
+                return null;
+            }
+
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileWithKey : urlFileWithPassword;
+
+            try
+            {
+                var client = new WebClient();
+                var response = client.DownloadString(url);
+                var jObject = JObject.Parse(response);
+
+                List<FilesFromDirectory> filesFromDirectory = new List<FilesFromDirectory>();
+                foreach (var obj in jObject["objects"])
+                {
+                    filesFromDirectory.Add(new FilesFromDirectory
+                    {
+                        Id = (String)obj["id"],
+                        Name = (String)obj["name"],
+                        DateCreate = (String)obj["created"],
+                        DirectoryId = (String)obj["folder_id"]
+                    });
+                }
+
+                return filesFromDirectory;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }  // Запись нового списка файлов в директории
 
         private static String AnswerIsCreatingDirectory(NameValueCollection data, WebClient client)
         {
