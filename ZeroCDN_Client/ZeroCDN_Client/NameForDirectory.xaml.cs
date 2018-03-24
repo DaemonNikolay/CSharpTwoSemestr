@@ -31,16 +31,14 @@ namespace ZeroCDN_Client
             DialogResult = true;
         }
 
-        private void CancelNameDirectory_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-
-
         public new String Name()
         {
             return name;
+        }
+
+        private void CancelNameDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

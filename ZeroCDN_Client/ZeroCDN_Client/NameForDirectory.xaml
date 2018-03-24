@@ -11,7 +11,7 @@
             <ImageBrush ImageSource="Image/background.PNG" Opacity="0.4"/>
         </Grid.Background>
         <Button x:Name="OkNameDirectory" Content="Ок" HorizontalAlignment="Left" Margin="174,207,0,0" VerticalAlignment="Top" Width="75" Click="OkNameDirectory_Click"/>
-        <Button x:Name="CancelNameDirectory" Content="Отмена" HorizontalAlignment="Left" Margin="45,207,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="CancelNameDirectory" Content="Отмена" HorizontalAlignment="Left" Margin="45,207,0,0" VerticalAlignment="Top" Width="75" Click="CancelNameDirectory_Click"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Center" Margin="0,0,0,111" TextWrapping="Wrap" Text="Название директории" VerticalAlignment="Center" FontWeight="Bold"/>
         <TextBox x:Name="NameDirectory" HorizontalAlignment="Left" Height="23" Margin="82,114,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130"/>
 

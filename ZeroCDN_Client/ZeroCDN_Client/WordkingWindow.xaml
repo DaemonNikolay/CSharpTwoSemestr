@@ -13,20 +13,20 @@
         <DataGrid x:Name="TableDirectoriesServer" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Height="345" Width="384" SelectionChanged="TableDirectoriesServer_SelectionChanged" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"/>
         <TextBlock x:Name="textBlockTableDirectoryServer" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Директории на сервере" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
         <ToolBar x:Name="toolBarDirectoriesServer" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Height="31" Width="384" Background="{x:Null}">
-            <Button x:Name="CreateDirecoryToServer" Content="" Height="25.6" VerticalAlignment="Top" Width="75" Cursor="Hand" Click="CreateDirecoryToServer_Click">
+            <Button x:Name="CreateDirecoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand" Click="CreateDirecoryToServer_Click" Margin="0,0,0,-0.4">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/CreateDirectory.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
             <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2"/>
-            <Button x:Name="DeleteDirecoryToServer" Content="" Height="25.6" VerticalAlignment="Top" Width="75">
+            <Button x:Name="DeleteDirecoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Margin="0,0,0,-0.4">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/DeleteDirectory.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
             <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2
                        "/>
-            <Button x:Name="RenameDirectoryToServer" Content="" Height="25.6" VerticalAlignment="Top" Width="75">
+            <Button x:Name="RenameDirectoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Margin="0,0,0,-0.4">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/SettingsDirectory.png" Stretch="Uniform"/>
                 </Button.Background>
