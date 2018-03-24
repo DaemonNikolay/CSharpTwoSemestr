@@ -22,7 +22,8 @@ namespace ZeroCDN_Client
     /// </summary>
     public partial class WordkingWindow : Window
     {
-        ApiZeroCDN api;
+        private ApiZeroCDN api;
+        private List<DirectoryFromServer> markedForDeletion = new List<DirectoryFromServer>();
 
         public WordkingWindow(ApiZeroCDN api)
         {
@@ -63,25 +64,35 @@ namespace ZeroCDN_Client
             if (windowName.ShowDialog() == true)
             {
                 var name = windowName.NameDirectory.Text;
+                name = windowName.NameDirectory.Text;
 
-                while (true)
+                var newDirectory = api.CreateDirectory(name);
+
+                if (newDirectory != "-1")
                 {
-                    name = windowName.NameDirectory.Text;
-                    var newDirectory = api.CreateDirectory(name);
-
-                    if (newDirectory == "-1")
-                    {
-                        MessageBox.Show("Такое имя уже существует!");
-
-                        continue;
-                    }
-
-                    break;
+                    TableDirectoriesServer.ItemsSource = null;
+                    TableDirectoriesServer.ItemsSource = api.GetDirectories();
                 }
 
-                TableDirectoriesServer.ItemsSource = null;
-                TableDirectoriesServer.ItemsSource = api.GetDirectories(); 
+                MessageBox.Show("Такое имя уже существует!");
             }
+        }
+
+        private void DeleteDirecoryToServer_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var element in TableDirectoriesServer.SelectedItems)
+            {
+                markedForDeletion.Add((DirectoryFromServer)element);
+            }
+            foreach (var element in markedForDeletion)
+            {
+                var resultDelete = api.DeleteDirectory(Int32.Parse(element.Id));
+            }
+
+            markedForDeletion.Clear();
+
+            TableDirectoriesServer.ItemsSource = null;
+            TableDirectoriesServer.ItemsSource = api.GetDirectories();
         }
     }
 }

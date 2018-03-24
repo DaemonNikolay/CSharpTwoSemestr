@@ -19,9 +19,9 @@
                 </Button.Background>
             </Button>
             <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2"/>
-            <Button x:Name="DeleteDirecoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Margin="0,0,0,-0.4">
+            <Button x:Name="DeleteDirecoryToServer" Content="" VerticalAlignment="Stretch" Width="33" Margin="0,0,0,-0.4" Click="DeleteDirecoryToServer_Click">
                 <Button.Background>
-                    <ImageBrush ImageSource="Image/ToolBar/DeleteDirectory.png" Stretch="Uniform"/>
+                    <ImageBrush ImageSource="Image/ToolBar/DeleteDirectory.png" Stretch="Uniform" Opacity="0.995"/>
                 </Button.Background>
             </Button>
             <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2

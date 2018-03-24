@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ZeroCDN_Client
 {
@@ -27,8 +28,8 @@ namespace ZeroCDN_Client
         private const String postfixUsers = "users.json";
         private const String postfixDirectories = "folders.json";
 
-        private String urlDirectoryIdWithPassword = baseUrl + postfixDirectories;
-        private String urlDirectoryIdWithKey = baseUrl + postfixDirectories;
+        private String urlDirectoryIdWithPassword = baseUrl + "folders/";
+        private String urlDirectoryIdWithKey = baseUrl + "folders/";
 
         private String urlFileIdWithKey = baseUrl + "files/";
         private String urlFileIdWithPassword = baseUrl + "files/";
@@ -121,10 +122,10 @@ namespace ZeroCDN_Client
             }
 
             idToServer = idDirectory.ToString();
-            if (IsExistDirectoryId())
-            {
-                return "-1";
-            }
+            //if (IsExistDirectoryId())
+            //{
+            //    return "-1";
+            //}
 
             WebClient client = new WebClient();
 
@@ -188,12 +189,12 @@ namespace ZeroCDN_Client
             idToServer = id.ToString();
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileIdWithKey +
-                                                                        idToServer + ".json" +
-                                                                        "?username=" + userName +
-                                                                        "&api_key=" + pasOrKey : urlFileIdWithPassword +
-                                                                                                 idToServer + ".json"; ;
+                                                                        idToServer + ".json" : urlFileIdWithPassword +
+                                                                                               idToServer + ".json" +
+                                                                                               "?username=" + userName +
+                                                                                               "&api_key=" + pasOrKey;
 
-            return Delete(url, id);
+            return Delete(url);
         }
 
         /// <summary>
@@ -229,25 +230,16 @@ namespace ZeroCDN_Client
 
         public String DeleteDirectory(int id)
         {
-            if (typeAuth.Equals(null))
-            {
-                return null;
-            }
-
-            idToServer = id.ToString();
-
-            if (IsExistDirectoryId())
-            {
-                return "-1";
-            }
+            this.idToServer = id.ToString();
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlDirectoryIdWithKey + idToServer + ".json" : urlDirectoryIdWithPassword +
-                                                                                    this.idToServer + ".json" +
-                                                                                    "?username=" + this.userName +
-                                                                                    "&api_key=" + this.pasOrKey;
+                                     urlDirectoryIdWithKey +
+                                     this.idToServer + ".json" +
+                                     "?username=" + this.userName +
+                                     "&api_key=" + this.pasOrKey : urlDirectoryIdWithPassword +
+                                                                   this.idToServer + ".json";
 
-            return Delete(url, id);
+            return Delete(url);
         }
 
         public String MovingDirectory()
@@ -268,10 +260,10 @@ namespace ZeroCDN_Client
             }
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlDirectoryIdWithKey + idToServer + ".json" : urlDirectoryIdWithPassword +
-                                                                                    this.idToServer + ".json" +
-                                                                                    "?username=" + this.userName +
-                                                                                    "&api_key=" + this.pasOrKey;
+                                     urlDirectoryIdWithKey + this.idToServer + ".json" +
+                                                             "?username=" + this.userName +
+                                                             "&api_key=" + this.pasOrKey : urlDirectoryIdWithPassword +
+                                                                                           this.idToServer + ".json";
             return Rename(url, newNameDirectory);
         }
 
@@ -280,7 +272,7 @@ namespace ZeroCDN_Client
         /// </summary>
         /// 
 
-        private String Delete(String url, int id)
+        private String Delete(String url)
         {
             WebClient client = new WebClient();
 
@@ -322,19 +314,6 @@ namespace ZeroCDN_Client
                 return GetHttpStatusCode(ex);
             }
         }  // Общий код переименований
-
-        private bool IsExistDirectoryId()
-        {
-            foreach (var element in GetListDirectories())
-            {
-                if (element.Id == idToServer)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }  // Есть ли директория с таким id
 
         private bool IsExistDirectoryName(String newNameDirectory)
         {

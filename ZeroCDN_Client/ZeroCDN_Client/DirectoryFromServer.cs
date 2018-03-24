@@ -11,6 +11,7 @@ namespace ZeroCDN_Client
         private String nameDirectory;
         private String dateCreate;
         private String id;
+        private bool isReminder;
         //private String directLink;
 
         public string NameDirectory
@@ -49,6 +50,19 @@ namespace ZeroCDN_Client
             set
             {
                 id = value;
+            }
+        }
+
+        public bool IsReminder
+        {
+            get
+            {
+                return isReminder;
+            }
+
+            set
+            {
+                isReminder = value;
             }
         }
 
