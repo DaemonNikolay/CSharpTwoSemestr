@@ -11,16 +11,22 @@ namespace ZeroCDN_Client.Tests
     [TestClass()]
     public class ApiZeroCDNTests
     {
+        ApiZeroCDN api = new ApiZeroCDN();
+
         [TestMethod()]
         public void AuthLoginPasswordTest()
         {
+            var actual = api.AuthLoginPassword("nikulux", "rhjrjlbkmz109");
 
+            Assert.AreEqual(actual, "1");
         }
 
         [TestMethod()]
         public void AuthLoginKeyTest()
         {
+            var actual = api.AuthLoginKey("nikulux", "1234");
 
+            Assert.AreEqual(actual, "1");
         }
 
         [TestMethod()]

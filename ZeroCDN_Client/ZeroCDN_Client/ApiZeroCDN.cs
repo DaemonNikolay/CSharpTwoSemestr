@@ -25,7 +25,7 @@ namespace ZeroCDN_Client
 
         private const String baseUrl = "http://mng.zerocdn.com/api/v2/users/";
 
-        private const String postfixUsers = "users.json";
+        private const String postfixFiles = "files.json";
         private const String postfixDirectories = "folders.json";
 
         private String urlDirectoryIdWithPassword = baseUrl + "folders/";
@@ -34,11 +34,11 @@ namespace ZeroCDN_Client
         private String urlFileIdWithKey = baseUrl + "files/";
         private String urlFileIdWithPassword = baseUrl + "files/";
 
-        private String urlFileWithKey = baseUrl + postfixUsers;
+        private String urlFileWithKey = baseUrl + postfixFiles;
         private String urlDirectoryWithKey = baseUrl + postfixDirectories;
 
-        private String urlFileWithPassword = baseUrl + postfixDirectories;
-        private String urlDirectoryWithPassword = baseUrl + postfixUsers;
+        private String urlFileWithPassword = baseUrl + postfixFiles;
+        private String urlDirectoryWithPassword = baseUrl + postfixDirectories;
 
         private enum typeAuthorization
         {
@@ -68,10 +68,11 @@ namespace ZeroCDN_Client
 
             try
             {
-                StreamReader reader = new StreamReader(client.DownloadString(urlFileWithPassword));
+                var response = client.DownloadString(urlFileWithPassword);
+
                 typeAuth = typeAuthorization.LoginAndPassword;
 
-                return reader.ReadToEnd();
+                return response;
             }
             catch (WebException ex)
             {
@@ -97,12 +98,11 @@ namespace ZeroCDN_Client
 
             try
             {
-                var response = client.DownloadString(urlFileWithKey + "?username=" + userName + "&api_key=" + pasOrKey);
-                StreamReader reader = new StreamReader(response);
+                var response = client.UploadValues(urlFileWithKey + "?username=" + userName + "&api_key=" + pasOrKey, new NameValueCollection());
 
                 typeAuth = typeAuthorization.LoginAndAPiKey;
 
-                return reader.ReadToEnd();
+                return Encoding.ASCII.GetString(response);
             }
             catch (WebException ex)
             {
@@ -363,8 +363,10 @@ namespace ZeroCDN_Client
             }
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey +
-                                                                        "?username=" + userName +
-                                                                        "&api_key=" + pasOrKey : urlDirectoryWithPassword;
+                                                                        "?username=" + this.userName +
+                                                                        "&api_key=" + this.pasOrKey : urlDirectoryWithPassword;
+
+            MessageBox.Show("WriteExistingDirectories\n" + (typeAuth == typeAuthorization.LoginAndPassword));
 
             //try
             //{

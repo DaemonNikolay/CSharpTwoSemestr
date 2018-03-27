@@ -33,10 +33,25 @@ namespace ZeroCDN_Client
             String login = InputAuthLogin.Text;
             String password = InputAuthPassword.Text;
 
-            var auth = api.AuthLoginKey(login, password);
+            //var auth = api.AuthLoginKey(login, password);
+            var auth = api.AuthLoginPassword(login, password);
 
-            if (auth != "200")
+            if (auth == "429")
             {
+                MessageBox.Show("Жди пять минут, код 429.");
+            }
+            else if (auth == "403")
+            {
+                MessageBox.Show("Учётные данные пользователя не верны!");
+            }
+            else if (auth.Length == 3)
+            {
+                MessageBox.Show($"Error, code {auth}");
+            }
+            else
+            {
+                MessageBox.Show(auth);
+
                 this.Visibility = Visibility.Collapsed;
 
                 WordkingWindow wind = new WordkingWindow(api);

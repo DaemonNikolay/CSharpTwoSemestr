@@ -72,9 +72,11 @@ namespace ZeroCDN_Client
                 {
                     TableDirectoriesServer.ItemsSource = null;
                     TableDirectoriesServer.ItemsSource = api.GetDirectories();
+
+                    return;
                 }
 
-                MessageBox.Show("Такое имя уже существует!");
+                MessageBox.Show("Выбранное имя уже существует!");
             }
         }
 
@@ -90,7 +92,7 @@ namespace ZeroCDN_Client
             }
 
             markedForDeletion.Clear();
-
+           
             TableDirectoriesServer.ItemsSource = null;
             TableDirectoriesServer.ItemsSource = api.GetDirectories();
         }
