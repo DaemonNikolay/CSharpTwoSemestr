@@ -25,7 +25,7 @@ namespace ZeroCDN_Client
     public partial class WordkingWindow : Window
     {
         private ApiZeroCDN api;
-        private List<DirectoryFromServer> markedForDeletion = new List<DirectoryFromServer>();
+        private List<DirectoryFromServer> markedItems = new List<DirectoryFromServer>();
 
         public WordkingWindow(ApiZeroCDN api)
         {
@@ -88,14 +88,14 @@ namespace ZeroCDN_Client
         {
             foreach (var element in TableDirectoriesServer.SelectedItems)
             {
-                markedForDeletion.Add((DirectoryFromServer)element);
+                markedItems.Add((DirectoryFromServer)element);
             }
-            foreach (var element in markedForDeletion)
+            foreach (var element in markedItems)
             {
                 var resultDelete = api.DeleteDirectory(Int32.Parse(element.Id));
             }
 
-            markedForDeletion.Clear();
+            markedItems.Clear();
 
             TableDirectoriesServer.ItemsSource = null;
             TableDirectoriesServer.ItemsSource = api.GetDirectories();
@@ -120,10 +120,6 @@ namespace ZeroCDN_Client
                 TableDirectoriesServer.ItemsSource = null;
                 TableDirectoriesServer.ItemsSource = api.GetDirectories();
             }
-
-
-
-            MessageBox.Show("" + selectItem);
         }
 
         private void TableDirectoriesServer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -159,8 +155,24 @@ namespace ZeroCDN_Client
 
             var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
 
-  
+
             TableFilesFromDirectory.ItemsSource = listFiles;
+        }
+
+        private void TableDirectoriesServer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            DragDrop.DoDragDrop(TableDirectoriesServer, TableDirectoriesServer.Items, DragDropEffects.Move);
+        }
+
+        private void TableDirectoriesServer_Drop(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
+        {
+            MovingToDirectory window = new MovingToDirectory(api.GetDirectories());
+            window.Show();
         }
     }
 }

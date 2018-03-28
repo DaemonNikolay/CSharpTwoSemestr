@@ -10,7 +10,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="Image/background.PNG" TileMode="FlipX" Opacity="0.4"/>
         </Grid.Background>
-        <DataGrid x:Name="TableDirectoriesServer" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Height="345" Width="384" SelectionChanged="TableDirectoriesServer_SelectionChanged" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" MouseDoubleClick="TableDirectoriesServer_MouseDoubleClick"/>
+        <DataGrid x:Name="TableDirectoriesServer" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Height="345" Width="384" SelectionChanged="TableDirectoriesServer_SelectionChanged" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" MouseDoubleClick="TableDirectoriesServer_MouseDoubleClick" AllowDrop="True" MouseDown="TableDirectoriesServer_MouseDown" Drop="TableDirectoriesServer_Drop"/>
         <TextBlock x:Name="textBlockTableDirectoryServer" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Директории на сервере" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
         <ToolBar x:Name="toolBarDirectoriesServer" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Height="31" Width="384" Background="{x:Null}">
             <Button x:Name="CreateDirecoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand" Click="CreateDirecoryToServer_Click" Margin="0,0,0,-0.4" ToolTip="Создать директорию">
@@ -19,21 +19,26 @@
                 </Button.Background>
             </Button>
             <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2"/>
-            <Button x:Name="DeleteDirecoryToServer" Content="" VerticalAlignment="Stretch" Width="33" Margin="0,0,0,-0.4" Click="DeleteDirecoryToServer_Click">
+            <Button x:Name="DeleteDirecoryToServer" Content="" VerticalAlignment="Stretch" Width="33" Margin="0,0,0,-0.4" Click="DeleteDirecoryToServer_Click" ToolTip="Удалить директорию" Cursor="Hand" Height="26">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/DeleteDirectory.png" Stretch="Uniform" Opacity="0.995"/>
                 </Button.Background>
             </Button>
-            <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2
-                       "/>
-            <Button x:Name="RenameDirectoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Margin="0,0,0,-0.4" Click="RenameDirectoryToServer_Click">
+            <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2"/>
+            <Button x:Name="RenameDirectoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Margin="0,0,0,-0.4" Click="RenameDirectoryToServer_Click" ToolTip="Настройки директории" Cursor="Hand">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/SettingsDirectory.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
+            <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2"/>
+            <Button x:Name="MovingDirectoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand" ToolTip="Перемещение" Margin="0,0,0,-0.4" Click="MovingDirectoryToServer_Click">
+                <Button.Background>
+                    <ImageBrush ImageSource="Image/ToolBar/MovingDirectoryToServer.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
         </ToolBar>
         <TextBlock x:Name="textBlockTableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,9,0,0" TextWrapping="Wrap" Text="Файлы директории" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
-        <DataGrid x:Name="TableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,68,0,0" VerticalAlignment="Top" Height="345" Width="384" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"/>
+        <DataGrid x:Name="TableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,68,0,0" VerticalAlignment="Top" Height="345" Width="384" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AllowDrop="True"/>
 
     </Grid>
 </Window>
