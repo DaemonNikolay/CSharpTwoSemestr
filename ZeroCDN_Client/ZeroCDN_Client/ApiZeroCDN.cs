@@ -114,6 +114,23 @@ namespace ZeroCDN_Client
         /// Взаимодействие с файлами
         /// </summary>
 
+        internal List<FilesFromDirectory> GetFilesInDirectory(String idDirectory)
+        {
+            List<FilesFromDirectory> filesInDirectory = new List<FilesFromDirectory>();
+
+            foreach (var element in GetListFiles())
+            {
+                if (element.DirectoryId == idDirectory)
+                {
+                    filesInDirectory.Add(element);
+                }
+            }
+
+            MessageBox.Show("" + filesInDirectory);
+
+            return filesInDirectory;
+        }
+
         public String LoadFileToDirectory(int idDirectory, String pathToFile)
         {
             if (pathToFile.Length == 0)
@@ -401,15 +418,17 @@ namespace ZeroCDN_Client
             if (newListFiles != null)
             {
                 existsFiles.Clear();
-
+                
                 foreach (var element in newListFiles)
                 {
                     existsFiles.Add(new FilesFromDirectory
                     {
                         Id = element.Id,
                         Name = element.Name,
+                        SizeInMB = element.SizeInMB,
                         DateCreate = element.DateCreate,
-                        DirectoryId = element.DirectoryId
+                        DirectoryId = element.DirectoryId,
+                        Type = element.Type
                     });
                 }
             }
@@ -439,8 +458,10 @@ namespace ZeroCDN_Client
                     {
                         Id = (String)obj["id"],
                         Name = (String)obj["name"],
+                        SizeInMB = (String)obj["size"],
+                        Type = (String)obj["content_type"],
                         DateCreate = (String)obj["created"],
-                        DirectoryId = (String)obj["folder_id"]
+                        DirectoryId = (String)obj["folder"]
                     });
                 }
 

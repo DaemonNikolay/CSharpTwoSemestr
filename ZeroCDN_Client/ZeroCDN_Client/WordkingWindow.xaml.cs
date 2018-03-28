@@ -20,6 +20,8 @@ namespace ZeroCDN_Client
     /// <summary>
     /// Логика взаимодействия для WordkingWindow.xaml
     /// </summary>
+
+    ///Directory
     public partial class WordkingWindow : Window
     {
         private ApiZeroCDN api;
@@ -35,7 +37,9 @@ namespace ZeroCDN_Client
 
         private void TableDirectoriesServer_Loaded(object sender, RoutedEventArgs e)
         {
+            TableDirectoriesServer.IsEnabled = true;
             TableDirectoriesServer.AutoGenerateColumns = false;
+
             TableDirectoriesServer.Columns.Add(new DataGridTextColumn
             {
                 Header = "Название",
@@ -102,8 +106,6 @@ namespace ZeroCDN_Client
             var selectItem = TableDirectoriesServer.SelectedItem;
             DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
 
-            //MessageBox.Show("" + currentDirectory.Id);
-
             if (currentDirectory == null)
             {
                 MessageBox.Show("Выберите директорию!");
@@ -115,8 +117,6 @@ namespace ZeroCDN_Client
             {
                 var resultRename = api.RenameDirectory(window.NameDirectory.Text, Convert.ToInt32(currentDirectory.Id));
 
-                MessageBox.Show("resultRename: " + resultRename);
-
                 TableDirectoriesServer.ItemsSource = null;
                 TableDirectoriesServer.ItemsSource = api.GetDirectories();
             }
@@ -124,6 +124,43 @@ namespace ZeroCDN_Client
 
 
             MessageBox.Show("" + selectItem);
+        }
+
+        private void TableDirectoriesServer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var selectItem = TableDirectoriesServer.SelectedItem;
+            DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
+
+            TableFilesFromDirectory.IsEnabled = true;
+            TableFilesFromDirectory.AutoGenerateColumns = false;
+
+            TableFilesFromDirectory.Columns.Clear();
+
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Название",
+                Binding = new Binding("Name"),
+            });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Размер (Мб)",
+                Binding = new Binding("SizeInMB"),
+            });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Дата загрузки",
+                Binding = new Binding("DateCreate"),
+            });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Тип",
+                Binding = new Binding("Type"),
+            });
+
+            var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
+
+  
+            TableFilesFromDirectory.ItemsSource = listFiles;
         }
     }
 }

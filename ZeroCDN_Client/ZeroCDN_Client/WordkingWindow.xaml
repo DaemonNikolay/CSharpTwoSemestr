@@ -10,7 +10,7 @@
         <Grid.Background>
             <ImageBrush ImageSource="Image/background.PNG" TileMode="FlipX" Opacity="0.4"/>
         </Grid.Background>
-        <DataGrid x:Name="TableDirectoriesServer" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Height="345" Width="384" SelectionChanged="TableDirectoriesServer_SelectionChanged" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True"/>
+        <DataGrid x:Name="TableDirectoriesServer" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Height="345" Width="384" SelectionChanged="TableDirectoriesServer_SelectionChanged" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" MouseDoubleClick="TableDirectoriesServer_MouseDoubleClick"/>
         <TextBlock x:Name="textBlockTableDirectoryServer" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Директории на сервере" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
         <ToolBar x:Name="toolBarDirectoriesServer" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Height="31" Width="384" Background="{x:Null}">
             <Button x:Name="CreateDirecoryToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand" Click="CreateDirecoryToServer_Click" Margin="0,0,0,-0.4">
@@ -32,6 +32,8 @@
                 </Button.Background>
             </Button>
         </ToolBar>
+        <DataGrid x:Name="TableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,68,0,0" VerticalAlignment="Top" Height="345" Width="384"/>
+        <TextBlock x:Name="textBlockTableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,9,0,0" TextWrapping="Wrap" Text="Файлы директории" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
 
     </Grid>
 </Window>

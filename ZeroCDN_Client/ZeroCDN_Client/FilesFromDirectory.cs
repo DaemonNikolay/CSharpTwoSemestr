@@ -10,8 +10,10 @@ namespace ZeroCDN_Client
     {
         private String id;
         private String name;
+        private String sizeInMB;
         private String dateCreate;
         private String directoryId;
+        private String type;
 
         public string Id
         {
@@ -39,6 +41,19 @@ namespace ZeroCDN_Client
             }
         }
 
+        public string SizeInMB
+        {
+            get
+            {
+                return sizeInMB;
+            }
+
+            set
+            {
+                sizeInMB = value;
+            }
+        }
+
         public string DateCreate
         {
             get
@@ -62,6 +77,19 @@ namespace ZeroCDN_Client
             set
             {
                 directoryId = value;
+            }
+        }
+
+        public string Type
+        {
+            get
+            {
+                return type;
+            }
+
+            set
+            {
+                type = value;
             }
         }
     }
