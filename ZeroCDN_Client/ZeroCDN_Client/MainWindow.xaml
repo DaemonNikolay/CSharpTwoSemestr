@@ -11,9 +11,13 @@
             <ImageBrush ImageSource="Image/background.PNG" Opacity="0.4" TileMode="FlipX"/>
         </Grid.Background>
         <TextBlock x:Name="AuthPassword" Margin="10,155,10.4,133.8" TextWrapping="Wrap" Text="Пароль" HorizontalAlignment="Center" VerticalAlignment="Center" Width="498" Height="32" FontWeight="Bold" TextOptions.TextFormattingMode="Display" TextAlignment="Center"/>
-        <TextBox x:Name="InputAuthPassword" HorizontalAlignment="Center" Margin="0,65,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="110"/>
+        <TextBox x:Name="InputAuthPassword" HorizontalAlignment="Center" Margin="0,65,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="110" Background="White">
+            <TextBox.BorderBrush>
+                <SolidColorBrush Color="#FFABADB3"/>
+            </TextBox.BorderBrush>
+        </TextBox>
         <Button x:Name="SendDataAuth" Content="Авторизоваться" HorizontalAlignment="Center" Margin="0,200,0,0" VerticalAlignment="Center" Width="110" Height="26" Cursor="Hand" Click="SendDataAuth_Click"/>
-        <TextBox x:Name="InputAuthLogin" HorizontalAlignment="Center" Margin="0,0,0,180" TextWrapping="Wrap" VerticalAlignment="Center" Width="110"/>
+        <TextBox x:Name="InputAuthLogin" HorizontalAlignment="Center" Margin="0,0,0,180" TextWrapping="Wrap" VerticalAlignment="Center" Width="110" MaxWidth="110" BorderThickness="1"/>
         <TextBlock x:Name="AuthLogin" HorizontalAlignment="Center" Margin="7,30,10.4,264.8" TextWrapping="Wrap" Text="Логин" VerticalAlignment="Center" Height="26" Width="501" FontWeight="Bold" TextOptions.TextFormattingMode="Display" TextAlignment="Center" />
 
     </Grid>

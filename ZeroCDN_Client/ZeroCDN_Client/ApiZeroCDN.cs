@@ -28,8 +28,8 @@ namespace ZeroCDN_Client
         private const String postfixFiles = "files.json";
         private const String postfixDirectories = "folders.json";
 
-        private String urlDirectoryIdWithPassword = baseUrl + "folders/";
-        private String urlDirectoryIdWithKey = baseUrl + "folders/";
+        private String urlDirectoryIdWithPassword = "http://zerocdn.com/api/v2/users/" + "folders/";
+        private String urlDirectoryIdWithKey = "http://zerocdn.com/api/v2/users/" + "folders/";
 
         private String urlFileIdWithKey = baseUrl + "files/";
         private String urlFileIdWithPassword = baseUrl + "files/";
@@ -247,23 +247,22 @@ namespace ZeroCDN_Client
             return "-1";
         }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
 
-        public String RenameDirectory(String newNameDirectory)
+        public String RenameDirectory(String newNameDirectory, int idCurrentDirectory)
         {
             if (typeAuth.Equals(null))
             {
                 return null;
             }
 
-            if (IsExistDirectoryName(newNameDirectory))
-            {
-                return "-1";
-            }
+            this.idToServer = idCurrentDirectory.ToString();
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
                                      urlDirectoryIdWithKey + this.idToServer + ".json" +
                                                              "?username=" + this.userName +
                                                              "&api_key=" + this.pasOrKey : urlDirectoryIdWithPassword +
                                                                                            this.idToServer + ".json";
+            MessageBox.Show("url: " + url);
+
             return Rename(url, newNameDirectory);
         }
 
@@ -290,22 +289,17 @@ namespace ZeroCDN_Client
 
         private String Rename(String url, String newName)
         {
-            if (typeAuth.Equals(null))
-            {
-                return null;
-            }
-
             WebClient client = new WebClient();
 
             var data = new NameValueCollection
                 {
                     { "Content-Type", "application/json" },
-                    { "name", newName },
+                    { "name", $"{newName}" },
                 };
 
             try
             {
-                var response = client.UploadValues(url, data);
+                var response = client.UploadValues(url, "PATCH", data);
 
                 return Encoding.ASCII.GetString(response);
             }
@@ -366,7 +360,7 @@ namespace ZeroCDN_Client
                                                                         "?username=" + this.userName +
                                                                         "&api_key=" + this.pasOrKey : urlDirectoryWithPassword;
 
-            MessageBox.Show("WriteExistingDirectories\n" + (typeAuth == typeAuthorization.LoginAndPassword));
+            //MessageBox.Show("WriteExistingDirectories\n" + (typeAuth == typeAuthorization.LoginAndPassword));
 
             //try
             //{

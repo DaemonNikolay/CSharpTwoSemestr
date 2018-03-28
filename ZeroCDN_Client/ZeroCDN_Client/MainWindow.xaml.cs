@@ -33,8 +33,8 @@ namespace ZeroCDN_Client
             String login = InputAuthLogin.Text;
             String password = InputAuthPassword.Text;
 
-            //var auth = api.AuthLoginKey(login, password);
-            var auth = api.AuthLoginPassword(login, password);
+            var auth = api.AuthLoginKey(login, password);
+            //var auth = api.AuthLoginPassword(login, password);
 
             if (auth == "429")
             {

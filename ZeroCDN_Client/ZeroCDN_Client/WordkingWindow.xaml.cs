@@ -92,9 +92,38 @@ namespace ZeroCDN_Client
             }
 
             markedForDeletion.Clear();
-           
+
             TableDirectoriesServer.ItemsSource = null;
             TableDirectoriesServer.ItemsSource = api.GetDirectories();
+        }
+
+        private void RenameDirectoryToServer_Click(object sender, RoutedEventArgs e)
+        {
+            var selectItem = TableDirectoriesServer.SelectedItem;
+            DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
+
+            //MessageBox.Show("" + currentDirectory.Id);
+
+            if (currentDirectory == null)
+            {
+                MessageBox.Show("Выберите директорию!");
+                return;
+            }
+
+            NameForDirectory window = new NameForDirectory();
+            if (window.ShowDialog() == true)
+            {
+                var resultRename = api.RenameDirectory(window.NameDirectory.Text, Convert.ToInt32(currentDirectory.Id));
+
+                MessageBox.Show("resultRename: " + resultRename);
+
+                TableDirectoriesServer.ItemsSource = null;
+                TableDirectoriesServer.ItemsSource = api.GetDirectories();
+            }
+
+
+
+            MessageBox.Show("" + selectItem);
         }
     }
 }
