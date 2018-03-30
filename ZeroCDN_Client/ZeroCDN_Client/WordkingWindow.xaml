@@ -39,6 +39,33 @@
         </ToolBar>
         <TextBlock x:Name="textBlockTableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,9,0,0" TextWrapping="Wrap" Text="Файлы директории" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
         <DataGrid x:Name="TableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,68,0,0" VerticalAlignment="Top" Height="345" Width="384" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AllowDrop="True"/>
+        <ToolBar x:Name="toolBar" HorizontalAlignment="Left" Margin="586,36,0,0" VerticalAlignment="Top" Height="33" Width="384">
+            <Button x:Name="UploadToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand">
+                <Button.Background>
+                    <ImageBrush ImageSource="Image/ToolBar/UploadFromServer.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="button" Content="" Height="26" VerticalAlignment="Top" Width="33">
+                <Button.Background>
+                    <ImageBrush ImageSource="Image/ToolBar/DeleteFile.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="SettingsFile" Content="" Height="26" VerticalAlignment="Top" Width="33">
+                <Button.Background>
+                    <ImageBrush ImageSource="Image/ToolBar/SettingsFile.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="PublicLink" Content="" Height="26" VerticalAlignment="Top" Width="33">
+                <Button.Background>
+                    <ImageBrush ImageSource="Image/ToolBar/PublicLink.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button x:Name="DirectLink" Content="" Height="26" VerticalAlignment="Top" Width="33">
+                <Button.Background>
+                    <ImageBrush Stretch="Uniform" ImageSource="Image/ToolBar/DirectLink.png"/>
+                </Button.Background>
+            </Button>
+        </ToolBar>
 
     </Grid>
 </Window>
