@@ -45,22 +45,22 @@
                     <ImageBrush ImageSource="Image/ToolBar/UploadFromServer.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="button" Content="" Height="26" VerticalAlignment="Top" Width="33">
+            <Button x:Name="DeleteFile" Content="" Height="26" VerticalAlignment="Top" Width="33" Click="DeleteFile_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/DeleteFile.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="SettingsFile" Content="" Height="26" VerticalAlignment="Top" Width="33">
+            <Button x:Name="SettingsFile" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/SettingsFile.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="PublicLink" Content="" Height="26" VerticalAlignment="Top" Width="33">
+            <Button x:Name="PublicLink" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/PublicLink.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="DirectLink" Content="" Height="26" VerticalAlignment="Top" Width="33">
+            <Button x:Name="DirectLink" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand">
                 <Button.Background>
                     <ImageBrush Stretch="Uniform" ImageSource="Image/ToolBar/DirectLink.png"/>
                 </Button.Background>

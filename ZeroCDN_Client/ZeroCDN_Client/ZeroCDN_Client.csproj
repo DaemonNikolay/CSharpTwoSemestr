@@ -143,6 +143,21 @@
   <ItemGroup>
     <Resource Include="Image\ToolBar\MovingDirectoryToServer.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\DirectLink.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\UploadFromServer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\DeleteFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\SettingsFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\PublicLink.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

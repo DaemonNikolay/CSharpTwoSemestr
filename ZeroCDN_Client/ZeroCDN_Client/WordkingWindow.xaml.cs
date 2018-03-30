@@ -25,7 +25,23 @@ namespace ZeroCDN_Client
     public partial class WordkingWindow : Window
     {
         private ApiZeroCDN api;
-        private List<DirectoryFromServer> markedItems = new List<DirectoryFromServer>();
+        private List<DirectoryFromServer> markedItemsDirectory = new List<DirectoryFromServer>();
+        private List<FilesFromDirectory> markedItemsFiles = new List<FilesFromDirectory>();
+
+        private DirectoryFromServer selectedDirectory;
+
+        private DirectoryFromServer SelectedDirectory
+        {
+            get
+            {
+                return selectedDirectory;
+            }
+
+            set
+            {
+                selectedDirectory = value;
+            }
+        }
 
         public WordkingWindow(ApiZeroCDN api)
         {
@@ -88,14 +104,14 @@ namespace ZeroCDN_Client
         {
             foreach (var element in TableDirectoriesServer.SelectedItems)
             {
-                markedItems.Add((DirectoryFromServer)element);
+                markedItemsDirectory.Add((DirectoryFromServer)element);
             }
-            foreach (var element in markedItems)
+            foreach (var element in markedItemsDirectory)
             {
                 var resultDelete = api.DeleteDirectory(Int32.Parse(element.Id));
             }
 
-            markedItems.Clear();
+            markedItemsDirectory.Clear();
 
             TableDirectoriesServer.ItemsSource = null;
             TableDirectoriesServer.ItemsSource = api.GetDirectories();
@@ -123,6 +139,108 @@ namespace ZeroCDN_Client
         }
 
         private void TableDirectoriesServer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            UpdateListFiles();
+
+            //var selectItem = TableDirectoriesServer.SelectedItem;
+            //DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
+
+            //TableFilesFromDirectory.IsEnabled = true;
+            //TableFilesFromDirectory.AutoGenerateColumns = false;
+
+            //TableFilesFromDirectory.Columns.Clear();
+
+            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            //{
+            //    Header = "Название",
+            //    Binding = new Binding("Name"),
+            //});
+            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            //{
+            //    Header = "Размер (Мб)",
+            //    Binding = new Binding("SizeInMB"),
+            //});
+            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            //{
+            //    Header = "Дата загрузки",
+            //    Binding = new Binding("DateCreate"),
+            //});
+            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            //{
+            //    Header = "Тип",
+            //    Binding = new Binding("Type"),
+            //});
+
+            //var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
+
+
+            //TableFilesFromDirectory.ItemsSource = listFiles;
+        }
+
+        private void TableDirectoriesServer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            DragDrop.DoDragDrop(TableDirectoriesServer, TableDirectoriesServer.Items, DragDropEffects.Move);
+        }
+
+        private void TableDirectoriesServer_Drop(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
+        {
+            var currentDirectories = api.GetDirectories();
+
+            MovingToDirectory window = new MovingToDirectory(currentDirectories);
+
+            var selectItem = TableDirectoriesServer.SelectedItem;
+            DirectoryFromServer selectDirectory = (DirectoryFromServer)selectItem;
+
+
+            if (window.ShowDialog() == true)
+            {
+                foreach (var element in currentDirectories)
+                {
+                    if (element.NameDirectory == window.SelectedDirectoryFromDropDown)
+                    {
+                        var moving = api.MovingDirectory(element.Id, selectDirectory.Id);
+
+                        break;
+                    }
+                }
+
+
+
+                TableDirectoriesServer.ItemsSource = null;
+                TableDirectoriesServer.ItemsSource = api.GetDirectories();
+            }
+
+        }
+
+        private void DeleteFile_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var element in TableFilesFromDirectory.SelectedItems)
+            {
+                markedItemsFiles.Add(((FilesFromDirectory)element));
+            }
+            foreach (var element in markedItemsFiles)
+            {
+                var resultDelete = api.DeleteFile(Int32.Parse(element.Id));
+
+                MessageBox.Show("resultDelete: " + resultDelete);
+            }
+
+            foreach (var element in markedItemsFiles)
+            {
+                MessageBox.Show("" + element.Name);
+            }
+
+            markedItemsFiles.Clear();
+
+            UpdateListFiles();
+        }
+
+        private void UpdateListFiles()
         {
             var selectItem = TableDirectoriesServer.SelectedItem;
             DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
@@ -157,46 +275,6 @@ namespace ZeroCDN_Client
 
 
             TableFilesFromDirectory.ItemsSource = listFiles;
-        }
-
-        private void TableDirectoriesServer_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            DragDrop.DoDragDrop(TableDirectoriesServer, TableDirectoriesServer.Items, DragDropEffects.Move);
-        }
-
-        private void TableDirectoriesServer_Drop(object sender, DragEventArgs e)
-        {
-
-        }
-
-        private void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
-        {
-            var currentDirectories = api.GetDirectories();
-
-            MovingToDirectory window = new MovingToDirectory(currentDirectories);
-
-            var selectItem = TableDirectoriesServer.SelectedItem;
-            DirectoryFromServer selectDirectory = (DirectoryFromServer)selectItem;
-
-
-            if (window.ShowDialog() == true)
-            {
-                foreach (var element in currentDirectories)
-                {
-                    if (element.NameDirectory == window.SelectedDirectoryFromDropDown)
-                    {
-                        var moving = api.MovingDirectory(element.Id, selectDirectory.Id);
-                        
-                        break;
-                    }
-                }
-
-                
-
-                TableDirectoriesServer.ItemsSource = null;
-                TableDirectoriesServer.ItemsSource = api.GetDirectories();
-            }
-
         }
     }
 }

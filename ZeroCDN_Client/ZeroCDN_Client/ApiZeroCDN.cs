@@ -200,18 +200,13 @@ namespace ZeroCDN_Client
 
         public String DeleteFile(int id)
         {
-            if (typeAuth.Equals(null))
-            {
-                return null;
-            }
-
             idToServer = id.ToString();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileIdWithKey +
-                                                                        idToServer + ".json" : urlFileIdWithPassword +
-                                                                                               idToServer + ".json" +
-                                                                                               "?username=" + userName +
-                                                                                               "&api_key=" + pasOrKey;
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
+                         urlFileIdWithKey + idToServer + ".json" +
+                         "?username=" + this.userName +
+                         "&api_key=" + this.pasOrKey : urlFileIdWithPassword +
+                                                      this.idToServer + ".json";
 
             return Delete(url);
         }
@@ -298,9 +293,6 @@ namespace ZeroCDN_Client
             {
                 return GetHttpStatusCode(ex);
             }
-
-
-            return "-1";
         }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
 
         public String RenameDirectory(String newNameDirectory, int idCurrentDirectory)
