@@ -98,7 +98,8 @@ namespace ZeroCDN_Client
 
             try
             {
-                var response = client.UploadValues(urlFileWithKey + "?username=" + userName + "&api_key=" + pasOrKey, new NameValueCollection());
+                var response = client.UploadValues(urlFileWithKey + "?username=" + userName + "&api_key=" + pasOrKey,
+                                                   new NameValueCollection());
 
                 typeAuth = typeAuthorization.LoginAndAPiKey;
 
@@ -146,7 +147,8 @@ namespace ZeroCDN_Client
 
             WebClient client = new WebClient();
 
-            idToServer = idDirectory.ToString();
+            this.idToServer = idDirectory.ToString();
+
             NameValueCollection data = new NameValueCollection
             {
                 { "Content-Type", "application/json" },
@@ -259,8 +261,45 @@ namespace ZeroCDN_Client
             return Delete(url);
         }
 
-        public String MovingDirectory()
+        public String MovingDirectory(String idDirectoryBegin, String idDirectoryEnd)
         {
+            WebClient client = new WebClient();
+
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
+                                     urlDirectoryIdWithKey +
+                                     idDirectoryEnd + ".json" +
+                                     "?username=" + this.userName +
+                                     "&api_key=" + this.pasOrKey : urlDirectoryIdWithPassword +
+                                                                   this.idToServer + ".json";
+
+
+            var data = new NameValueCollection
+                {
+                    { "Content-Type", "application/json" },
+                    { "folder", idDirectoryBegin },
+                };
+
+            try
+            {
+                foreach (var element in data.AllKeys)
+                {
+                    MessageBox.Show(element + " : " + data.Get(element));
+                }
+
+                MessageBox.Show("URL: " + url);
+
+                var moving = client.UploadValues(url, "PATCH", data);
+
+                MessageBox.Show("mOVING: " + moving);
+
+                return Encoding.ASCII.GetString(moving);
+            }
+            catch (WebException ex)
+            {
+                return GetHttpStatusCode(ex);
+            }
+
+
             return "-1";
         }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
 
@@ -418,7 +457,7 @@ namespace ZeroCDN_Client
             if (newListFiles != null)
             {
                 existsFiles.Clear();
-                
+
                 foreach (var element in newListFiles)
                 {
                     existsFiles.Add(new FilesFromDirectory

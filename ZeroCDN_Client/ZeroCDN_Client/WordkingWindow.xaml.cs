@@ -171,8 +171,32 @@ namespace ZeroCDN_Client
 
         private void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
         {
-            MovingToDirectory window = new MovingToDirectory(api.GetDirectories());
-            window.Show();
+            var currentDirectories = api.GetDirectories();
+
+            MovingToDirectory window = new MovingToDirectory(currentDirectories);
+
+            var selectItem = TableDirectoriesServer.SelectedItem;
+            DirectoryFromServer selectDirectory = (DirectoryFromServer)selectItem;
+
+
+            if (window.ShowDialog() == true)
+            {
+                foreach (var element in currentDirectories)
+                {
+                    if (element.NameDirectory == window.SelectedDirectoryFromDropDown)
+                    {
+                        var moving = api.MovingDirectory(element.Id, selectDirectory.Id);
+                        
+                        break;
+                    }
+                }
+
+                
+
+                TableDirectoriesServer.ItemsSource = null;
+                TableDirectoriesServer.ItemsSource = api.GetDirectories();
+            }
+
         }
     }
 }

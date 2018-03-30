@@ -19,19 +19,19 @@ namespace ZeroCDN_Client
     /// </summary>
     public partial class MovingToDirectory : Window
     {
-        private String selectedItem;
+        private String selectedDirectoryFromDropDown;
         private List<DirectoryFromServer> items;
 
-        public string SelectedItem
+        public string SelectedDirectoryFromDropDown
         {
             get
             {
-                return selectedItem;
+                return selectedDirectoryFromDropDown;
             }
 
             set
             {
-                selectedItem = value;
+                selectedDirectoryFromDropDown = value;
             }
         }
 
@@ -56,13 +56,13 @@ namespace ZeroCDN_Client
 
         private void OkNameDirectory_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItem = comboBoxListDirectories.SelectedValue;
+            this.SelectedDirectoryFromDropDown = "" + comboBoxListDirectories.SelectedValue; 
 
-            //DialogResult = true;
 
-            this.SelectedItem = "" + selectedItem;
-            
-            MessageBox.Show("" + this.SelectedItem);  //выводит выделенный элемент
+            //MessageBox.Show("" + this.SelectedItem);  //выводит выделенный элемент
+
+
+            DialogResult = true;
         }
 
         private void CancelNameDirectory_Click(object sender, RoutedEventArgs e)
