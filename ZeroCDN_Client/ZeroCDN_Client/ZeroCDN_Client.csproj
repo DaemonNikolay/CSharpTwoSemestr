@@ -68,6 +68,9 @@
     <Compile Include="NameForDirectory.xaml.cs">
       <DependentUpon>NameForDirectory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ShowingDataFile.xaml.cs">
+      <DependentUpon>ShowingDataFile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WebClientEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -91,6 +94,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NameForDirectory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ShowingDataFile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -157,6 +164,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Image\ToolBar\PublicLink.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\ToolBar\ShowingFile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

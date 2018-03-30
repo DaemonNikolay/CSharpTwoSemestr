@@ -166,8 +166,6 @@ namespace ZeroCDN_Client
                 }
             }
 
-            MessageBox.Show("" + filesInDirectory);
-
             return filesInDirectory;
         }
 
@@ -496,7 +494,7 @@ namespace ZeroCDN_Client
                         DateCreate = element.DateCreate,
                         DirectoryId = element.DirectoryId,
                         Type = element.Type,
-                        PublicLink = $"{UserName}.zerocdn.com/",
+                        PublicLink = $"{UserName}.zerocdn.com/", //требуется редактирование
                         DirectLink = $"zerocdn.com/{element.Id}/{element.Name}"
                     });
                 }

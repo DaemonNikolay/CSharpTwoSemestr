@@ -248,9 +248,9 @@ namespace ZeroCDN_Client
         private void RenameFile_Click(object sender, RoutedEventArgs e)
         {
             var selectItem = TableFilesFromDirectory.SelectedItem;
-            FilesFromDirectory currentDirectory = (FilesFromDirectory)selectItem;
+            FilesFromDirectory currentFile = (FilesFromDirectory)selectItem;
 
-            if (currentDirectory == null)
+            if (currentFile == null)
             {
                 MessageBox.Show("Выберите файл!");
                 return;
@@ -259,10 +259,25 @@ namespace ZeroCDN_Client
             NameForDirectory window = new NameForDirectory();
             if (window.ShowDialog() == true)
             {
-                var resultRename = api.RenameFile(window.NameDirectory.Text, Convert.ToInt32(currentDirectory.Id));
+                var resultRename = api.RenameFile(window.NameDirectory.Text, Convert.ToInt32(currentFile.Id));
 
                 UpdateListFiles();
             }
+        }
+
+        private void ShowingFile_Click(object sender, RoutedEventArgs e)
+        {
+            var selectItem = TableFilesFromDirectory.SelectedItem;
+            FilesFromDirectory currentFile = (FilesFromDirectory)selectItem;
+
+            ShowingDataFile window = new ShowingDataFile(currentFile.DirectLink);
+
+            window.Show();
+        }
+
+        private void TableFilesFromDirectory_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ShowingFile_Click(sender, e);
         }
     }
 }

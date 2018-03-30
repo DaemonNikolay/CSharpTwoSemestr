@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZeroCDN_Client"
         mc:Ignorable="d"
-        Title="Управление файлами ZeroCDN" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Width="1000" Height="804" Icon="Image/favicon.ico" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="Управление файлами ZeroCDN" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Width="1123.95" Height="804" Icon="Image/favicon.ico" WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Grid Margin="10,10,3.6,2.4">
         <Grid.Background>
             <ImageBrush ImageSource="Image/background.PNG" TileMode="FlipX" Opacity="0.4"/>
@@ -37,9 +37,9 @@
                 </Button.Background>
             </Button>
         </ToolBar>
-        <TextBlock x:Name="textBlockTableFilesFromDirectory" HorizontalAlignment="Left" Margin="586,9,0,0" TextWrapping="Wrap" Text="Файлы директории" VerticalAlignment="Top" Height="25" Width="384" TextAlignment="Center" FontWeight="Bold"/>
-        <DataGrid x:Name="TableFilesFromDirectory" HorizontalAlignment="Left" Margin="468,68,0,0" VerticalAlignment="Top" Height="345" Width="502" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AllowDrop="True"/>
-        <ToolBar x:Name="toolBar" HorizontalAlignment="Left" Margin="468,36,0,0" VerticalAlignment="Top" Height="33" Width="502" Background="White">
+        <TextBlock x:Name="textBlockTableFilesFromDirectory" HorizontalAlignment="Left" Margin="468,9,0,0" TextWrapping="Wrap" Text="Файлы директории" VerticalAlignment="Top" Height="25" Width="626" TextAlignment="Center" FontWeight="Bold"/>
+        <DataGrid x:Name="TableFilesFromDirectory" HorizontalAlignment="Left" Margin="468,68,0,0" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AllowDrop="True" MouseDoubleClick="TableFilesFromDirectory_MouseDoubleClick" MinHeight="345" MinWidth="626" Height="345"/>
+        <ToolBar x:Name="toolBar" HorizontalAlignment="Left" Margin="468,36,0,0" VerticalAlignment="Top" Height="33" Width="626" Background="White">
             <Button x:Name="UploadToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/UploadFromServer.png" Stretch="Uniform"/>
@@ -52,9 +52,15 @@
                 </Button.Background>
             </Button>
             <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2"/>
-            <Button x:Name="RenameFile" Content="" VerticalAlignment="Stretch" Width="32" Cursor="Hand" Margin="0,0,0,1.2" Click="RenameFile_Click">
+            <Button x:Name="RenameFile" Content="" VerticalAlignment="Stretch" Width="33" Cursor="Hand" Margin="0,0,0,1.2" Click="RenameFile_Click" Height="26">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/SettingsFile.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Separator Height="25.6" Margin="0" VerticalAlignment="Top" Width="2"/>
+            <Button x:Name="ShowingFile" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand" Click="ShowingFile_Click">
+                <Button.Background>
+                    <ImageBrush Stretch="Uniform" ImageSource="Image/ToolBar/ShowingFile.png"/>
                 </Button.Background>
             </Button>
         </ToolBar>
