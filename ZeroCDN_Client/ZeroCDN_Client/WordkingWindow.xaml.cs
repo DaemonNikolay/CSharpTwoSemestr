@@ -73,6 +73,16 @@ namespace ZeroCDN_Client
                 Header = "Тип",
                 Binding = new Binding("Type"),
             });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Публичная ссылка",
+                Binding = new Binding("PublicLink"),
+            });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Прямая ссылка",
+                Binding = new Binding("DirectLink"),
+            });
 
             var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
 

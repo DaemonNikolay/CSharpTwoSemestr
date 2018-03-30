@@ -50,20 +50,59 @@ namespace ZeroCDN_Client
         private List<DirectoryFromServer> existsDirectories = new List<DirectoryFromServer>();
         private List<FilesFromDirectory> existsFiles = new List<FilesFromDirectory>();
 
+        public string UserName
+        {
+            get
+            {
+                return userName;
+            }
+
+            set
+            {
+                userName = value;
+            }
+        }
+
+        public string PasOrKey
+        {
+            get
+            {
+                return pasOrKey;
+            }
+
+            set
+            {
+                pasOrKey = value;
+            }
+        }
+
+        public string IdToServer
+        {
+            get
+            {
+                return idToServer;
+            }
+
+            set
+            {
+                idToServer = value;
+            }
+        }
+
         /// <summary>
         /// Авторизация
         /// </summary>
 
         public String AuthLoginPassword(String username, String password)
         {
-            userName = username;
-            pasOrKey = password;
+            UserName = username;
+            PasOrKey = password;
 
             WebClient client = new WebClient();
 
-            client.Credentials = new NetworkCredential(userName, pasOrKey);
+            client.Credentials = new NetworkCredential(UserName, PasOrKey);
 
-            String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(userName + ":" + pasOrKey));
+            String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
             client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
 
             try
@@ -91,14 +130,14 @@ namespace ZeroCDN_Client
 
         public String AuthLoginKey(String username, String apiKey)
         {
-            this.userName = username;
-            this.pasOrKey = apiKey;
+            this.UserName = username;
+            this.PasOrKey = apiKey;
 
             WebClient client = new WebClient();
 
             try
             {
-                var response = client.UploadValues(urlFileWithKey + "?username=" + userName + "&api_key=" + pasOrKey,
+                var response = client.UploadValues(urlFileWithKey + "?username=" + UserName + "&api_key=" + PasOrKey,
                                                    new NameValueCollection());
 
                 typeAuth = typeAuthorization.LoginAndAPiKey;
@@ -139,7 +178,7 @@ namespace ZeroCDN_Client
                 return null;
             }
 
-            idToServer = idDirectory.ToString();
+            IdToServer = idDirectory.ToString();
             //if (IsExistDirectoryId())
             //{
             //    return "-1";
@@ -147,18 +186,18 @@ namespace ZeroCDN_Client
 
             WebClient client = new WebClient();
 
-            this.idToServer = idDirectory.ToString();
+            this.IdToServer = idDirectory.ToString();
 
             NameValueCollection data = new NameValueCollection
             {
                 { "Content-Type", "application/json" },
                 { "file", "@" + pathToFile },
-                { "folder", idToServer.ToString() }
+                { "folder", IdToServer.ToString() }
             };
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileWithKey +
-                                                                        "?username=" + userName +
-                                                                        "&api_key=" + pasOrKey : urlFileWithPassword;
+                                                                        "?username=" + UserName +
+                                                                        "&api_key=" + PasOrKey : urlFileWithPassword;
 
             try
             {
@@ -184,26 +223,26 @@ namespace ZeroCDN_Client
                 return null;
             }
 
-            this.idToServer = idCurrentFile.ToString();
+            this.IdToServer = idCurrentFile.ToString();
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlFileIdWithKey + this.idToServer + ".json" +
-                                                        "?username=" + userName +
-                                                        "&api_key=" + pasOrKey : urlFileIdWithPassword +
-                                                                                 this.idToServer + ".json"; ;
+                                     urlFileIdWithKey + this.IdToServer + ".json" +
+                                                        "?username=" + UserName +
+                                                        "&api_key=" + PasOrKey : urlFileIdWithPassword +
+                                                                                 this.IdToServer + ".json"; ;
 
             return Rename(url, newNameFile);
         }
 
         public String DeleteFile(int id)
         {
-            idToServer = id.ToString();
+            IdToServer = id.ToString();
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                         urlFileIdWithKey + idToServer + ".json" +
-                         "?username=" + this.userName +
-                         "&api_key=" + this.pasOrKey : urlFileIdWithPassword +
-                                                      this.idToServer + ".json";
+                                     urlFileIdWithKey + this.IdToServer + ".json" +
+                                                        "?username=" + this.UserName +
+                                                        "&api_key=" + this.PasOrKey : urlFileIdWithPassword +
+                                                                                      this.IdToServer + ".json";
 
             return Delete(url);
         }
@@ -241,14 +280,14 @@ namespace ZeroCDN_Client
 
         public String DeleteDirectory(int id)
         {
-            this.idToServer = id.ToString();
+            this.IdToServer = id.ToString();
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
                                      urlDirectoryIdWithKey +
-                                     this.idToServer + ".json" +
-                                     "?username=" + this.userName +
-                                     "&api_key=" + this.pasOrKey : urlDirectoryIdWithPassword +
-                                                                   this.idToServer + ".json";
+                                     IdToServer + ".json" +
+                                     "?username=" + UserName +
+                                     "&api_key=" + PasOrKey : urlDirectoryIdWithPassword +
+                                                                   IdToServer + ".json";
 
             return Delete(url);
         }
@@ -260,9 +299,9 @@ namespace ZeroCDN_Client
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
                                      urlDirectoryIdWithKey +
                                      idDirectoryEnd + ".json" +
-                                     "?username=" + this.userName +
-                                     "&api_key=" + this.pasOrKey : urlDirectoryIdWithPassword +
-                                                                   this.idToServer + ".json";
+                                     "?username=" + this.UserName +
+                                     "&api_key=" + this.PasOrKey : urlDirectoryIdWithPassword +
+                                                                   this.IdToServer + ".json";
 
 
             var data = new NameValueCollection
@@ -299,13 +338,13 @@ namespace ZeroCDN_Client
                 return null;
             }
 
-            this.idToServer = idCurrentDirectory.ToString();
+            this.IdToServer = idCurrentDirectory.ToString();
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlDirectoryIdWithKey + this.idToServer + ".json" +
-                                                             "?username=" + this.userName +
-                                                             "&api_key=" + this.pasOrKey : urlDirectoryIdWithPassword +
-                                                                                           this.idToServer + ".json";
+                                     urlDirectoryIdWithKey + IdToServer + ".json" +
+                                                             "?username=" + UserName +
+                                                             "&api_key=" + PasOrKey : urlDirectoryIdWithPassword +
+                                                                                      IdToServer + ".json";
             MessageBox.Show("url: " + url);
 
             return Rename(url, newNameDirectory);
@@ -402,8 +441,8 @@ namespace ZeroCDN_Client
             }
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey +
-                                                                        "?username=" + this.userName +
-                                                                        "&api_key=" + this.pasOrKey : urlDirectoryWithPassword;
+                                                                        "?username=" + this.UserName +
+                                                                        "&api_key=" + this.PasOrKey : urlDirectoryWithPassword;
 
             //MessageBox.Show("WriteExistingDirectories\n" + (typeAuth == typeAuthorization.LoginAndPassword));
 
@@ -456,7 +495,9 @@ namespace ZeroCDN_Client
                         SizeInMB = Math.Round(Double.Parse(element.SizeInMB) / 1024, 2).ToString(),
                         DateCreate = element.DateCreate,
                         DirectoryId = element.DirectoryId,
-                        Type = element.Type
+                        Type = element.Type,
+                        PublicLink = $"{UserName}.zerocdn.com/",
+                        DirectLink = $"zerocdn.com/{element.Id}/{element.Name}"
                     });
                 }
             }
@@ -470,8 +511,8 @@ namespace ZeroCDN_Client
             }
 
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileWithKey +
-                                                                        "?username=" + userName +
-                                                                        "&api_key=" + pasOrKey : urlFileWithPassword;
+                                                                        "?username=" + UserName +
+                                                                        "&api_key=" + PasOrKey : urlFileWithPassword;
 
             try
             {
@@ -504,8 +545,8 @@ namespace ZeroCDN_Client
         private String AnswerIsCreatingDirectory(NameValueCollection data, WebClient client)
         {
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey +
-                                                                        "?username=" + userName +
-                                                                        "&api_key=" + pasOrKey : urlDirectoryWithPassword;
+                                                                        "?username=" + UserName +
+                                                                        "&api_key=" + PasOrKey : urlDirectoryWithPassword;
 
             try
             {

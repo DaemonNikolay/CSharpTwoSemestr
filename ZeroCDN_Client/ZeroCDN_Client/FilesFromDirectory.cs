@@ -14,6 +14,8 @@ namespace ZeroCDN_Client
         private String dateCreate;
         private String directoryId;
         private String type;
+        private String directLink;
+        private String publicLink;
 
         public string Id
         {
@@ -90,6 +92,32 @@ namespace ZeroCDN_Client
             set
             {
                 type = value;
+            }
+        }
+
+        public string DirectLink
+        {
+            get
+            {
+                return directLink;
+            }
+
+            set
+            {
+                directLink = value;
+            }
+        }
+
+        public string PublicLink
+        {
+            get
+            {
+                return publicLink;
+            }
+
+            set
+            {
+                publicLink = value;
             }
         }
     }
