@@ -141,40 +141,6 @@ namespace ZeroCDN_Client
         private void TableDirectoriesServer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             UpdateListFiles();
-
-            //var selectItem = TableDirectoriesServer.SelectedItem;
-            //DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
-
-            //TableFilesFromDirectory.IsEnabled = true;
-            //TableFilesFromDirectory.AutoGenerateColumns = false;
-
-            //TableFilesFromDirectory.Columns.Clear();
-
-            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
-            //{
-            //    Header = "Название",
-            //    Binding = new Binding("Name"),
-            //});
-            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
-            //{
-            //    Header = "Размер (Мб)",
-            //    Binding = new Binding("SizeInMB"),
-            //});
-            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
-            //{
-            //    Header = "Дата загрузки",
-            //    Binding = new Binding("DateCreate"),
-            //});
-            //TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
-            //{
-            //    Header = "Тип",
-            //    Binding = new Binding("Type"),
-            //});
-
-            //var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
-
-
-            //TableFilesFromDirectory.ItemsSource = listFiles;
         }
 
         private void TableDirectoriesServer_MouseDown(object sender, MouseButtonEventArgs e)
@@ -226,17 +192,9 @@ namespace ZeroCDN_Client
             foreach (var element in markedItemsFiles)
             {
                 var resultDelete = api.DeleteFile(Int32.Parse(element.Id));
-
-                MessageBox.Show("resultDelete: " + resultDelete);
-            }
-
-            foreach (var element in markedItemsFiles)
-            {
-                MessageBox.Show("" + element.Name);
             }
 
             markedItemsFiles.Clear();
-
             UpdateListFiles();
         }
 
@@ -257,7 +215,7 @@ namespace ZeroCDN_Client
             });
             TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
             {
-                Header = "Размер (Мб)",
+                Header = "Размер (КБ)",
                 Binding = new Binding("SizeInMB"),
             });
             TableFilesFromDirectory.Columns.Add(new DataGridTextColumn

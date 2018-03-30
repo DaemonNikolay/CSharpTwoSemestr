@@ -456,7 +456,7 @@ namespace ZeroCDN_Client
                     {
                         Id = element.Id,
                         Name = element.Name,
-                        SizeInMB = element.SizeInMB,
+                        SizeInMB = Math.Round(Double.Parse(element.SizeInMB) / 1024, 2).ToString(),
                         DateCreate = element.DateCreate,
                         DirectoryId = element.DirectoryId,
                         Type = element.Type
