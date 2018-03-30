@@ -177,23 +177,20 @@ namespace ZeroCDN_Client
             return "-1";
         }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
 
-        public String RenameFile(String newNameFile)
+        public String RenameFile(String newNameFile, int idCurrentFile)
         {
             if (typeAuth.Equals(null))
             {
                 return null;
             }
 
-            if (IsExistDirectoryName(newNameFile))
-            {
-                return "-1";
-            }
+            this.idToServer = idCurrentFile.ToString();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileIdWithKey +
-                                                                        idToServer + ".json" +
-                                                                        "?username=" + userName +
-                                                                        "&api_key=" + pasOrKey : urlFileIdWithPassword +
-                                                                                                 idToServer + ".json"; ;
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
+                                     urlFileIdWithKey + this.idToServer + ".json" +
+                                                        "?username=" + userName +
+                                                        "&api_key=" + pasOrKey : urlFileIdWithPassword +
+                                                                                 this.idToServer + ".json"; ;
 
             return Rename(url, newNameFile);
         }

@@ -50,7 +50,7 @@
                     <ImageBrush ImageSource="Image/ToolBar/DeleteFile.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button x:Name="SettingsFile" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand">
+            <Button x:Name="RenameFile" Content="" VerticalAlignment="Stretch" Width="32" Cursor="Hand" Margin="0,0,0,1.2" Click="RenameFile_Click">
                 <Button.Background>
                     <ImageBrush ImageSource="Image/ToolBar/SettingsFile.png" Stretch="Uniform"/>
                 </Button.Background>

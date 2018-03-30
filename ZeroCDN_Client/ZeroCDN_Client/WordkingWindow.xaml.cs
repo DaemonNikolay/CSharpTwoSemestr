@@ -43,6 +43,43 @@ namespace ZeroCDN_Client
             }
         }
 
+        private void UpdateListFiles()
+        {
+            var selectItem = TableDirectoriesServer.SelectedItem;
+            DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
+
+            TableFilesFromDirectory.IsEnabled = true;
+            TableFilesFromDirectory.AutoGenerateColumns = false;
+
+            TableFilesFromDirectory.Columns.Clear();
+
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Название",
+                Binding = new Binding("Name"),
+            });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Размер (КБ)",
+                Binding = new Binding("SizeInMB"),
+            });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Дата загрузки",
+                Binding = new Binding("DateCreate"),
+            });
+            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            {
+                Header = "Тип",
+                Binding = new Binding("Type"),
+            });
+
+            var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
+
+
+            TableFilesFromDirectory.ItemsSource = listFiles;
+        }
+
         public WordkingWindow(ApiZeroCDN api)
         {
             this.api = api;
@@ -198,41 +235,24 @@ namespace ZeroCDN_Client
             UpdateListFiles();
         }
 
-        private void UpdateListFiles()
+        private void RenameFile_Click(object sender, RoutedEventArgs e)
         {
-            var selectItem = TableDirectoriesServer.SelectedItem;
-            DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
+            var selectItem = TableFilesFromDirectory.SelectedItem;
+            FilesFromDirectory currentDirectory = (FilesFromDirectory)selectItem;
 
-            TableFilesFromDirectory.IsEnabled = true;
-            TableFilesFromDirectory.AutoGenerateColumns = false;
-
-            TableFilesFromDirectory.Columns.Clear();
-
-            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
+            if (currentDirectory == null)
             {
-                Header = "Название",
-                Binding = new Binding("Name"),
-            });
-            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
-            {
-                Header = "Размер (КБ)",
-                Binding = new Binding("SizeInMB"),
-            });
-            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
-            {
-                Header = "Дата загрузки",
-                Binding = new Binding("DateCreate"),
-            });
-            TableFilesFromDirectory.Columns.Add(new DataGridTextColumn
-            {
-                Header = "Тип",
-                Binding = new Binding("Type"),
-            });
+                MessageBox.Show("Выберите файл!");
+                return;
+            }
 
-            var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
+            NameForDirectory window = new NameForDirectory();
+            if (window.ShowDialog() == true)
+            {
+                var resultRename = api.RenameFile(window.NameDirectory.Text, Convert.ToInt32(currentDirectory.Id));
 
-
-            TableFilesFromDirectory.ItemsSource = listFiles;
+                UpdateListFiles();
+            }
         }
     }
 }
