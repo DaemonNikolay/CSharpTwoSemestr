@@ -503,7 +503,16 @@ namespace ZeroCDN_Client
 
         private String GenerationPublicLink(JToken obj, WebClient client)
         {
+
+            http://nikulux.osmium.zerocdn.com/73.png
+
             String directoryUrl = (String)obj["folder"];
+
+            if (directoryUrl == null)
+            {
+                return $"http://{UserName}.cdn.zerocdn.com/{(String)obj["name"]}";
+            }
+
             String nameDirectory = "";
 
             while (directoryUrl != null)
@@ -526,7 +535,7 @@ namespace ZeroCDN_Client
                 nameDirectory = '/' + (String)jObject2["name"] + nameDirectory;
             }
 
-            return nameDirectory;
+            return $"http://{UserName}.cdn.zerocdn.com{nameDirectory}/{(String)obj["name"]}";
         }
 
         private List<FilesFromDirectory> WriteExistingFiles()
@@ -560,7 +569,7 @@ namespace ZeroCDN_Client
                         Type = (String)obj["content_type"],
                         DateCreate = (String)obj["created"],
                         DirectoryId = directoryId,
-                        PublicLink = directoryId == null ? "/" : GenerationPublicLink(obj, client),
+                        PublicLink = GenerationPublicLink(obj, client),
                         DirectLink = $"zerocdn.com/{id}/{name}"
                     });
                 }
