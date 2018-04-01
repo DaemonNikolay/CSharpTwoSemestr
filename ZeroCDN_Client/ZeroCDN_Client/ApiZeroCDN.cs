@@ -137,12 +137,19 @@ namespace ZeroCDN_Client
 
             try
             {
-                var response = client.UploadValues(urlFileWithKey + "?username=" + UserName + "&api_key=" + PasOrKey,
-                                                   new NameValueCollection());
+                //var response = client.UploadValues(urlFileWithKey + "?username=" + UserName + "&api_key=" + PasOrKey,
+                //                                   new NameValueCollection());
+
+                //typeAuth = typeAuthorization.LoginAndAPiKey;
+
+                //return Encoding.ASCII.GetString(response);
+
+
+                var response = client.DownloadString(urlFileWithKey + "?username=" + UserName + "&api_key=" + PasOrKey);
 
                 typeAuth = typeAuthorization.LoginAndAPiKey;
 
-                return Encoding.ASCII.GetString(response);
+                return response;
             }
             catch (WebException ex)
             {
@@ -602,6 +609,7 @@ namespace ZeroCDN_Client
 
         private String GetHttpStatusCode(WebException ex)
         {
+            //MessageBox.Show("" + (((HttpWebResponse)(ex.Response)).StatusCode));  //УЗНАЙ ЧТО ТАМ ПРИХОДИТ
             if (ex.Status == WebExceptionStatus.ProtocolError)
             {
                 var response = ex.Response as HttpWebResponse;
@@ -610,6 +618,11 @@ namespace ZeroCDN_Client
                     return response.StatusCode.ToString();
                 }
             }
+            //else if (((HttpWebResponse)(ex.Response)).StatusCode == HttpStatusCode.Forbidden)  //НЕ РАБОТАЕТ КАК НАДО
+            //{
+            //    MessageBox.Show("" + (((HttpWebResponse)(ex.Response)).StatusCode));
+            //    return HttpStatusCode.Forbidden.ToString();
+            //}
 
             return ex.Status.ToString();
         }  // Возврат HTTP статуса при обработке Exception в запросе
