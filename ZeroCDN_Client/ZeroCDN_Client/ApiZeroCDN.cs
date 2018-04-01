@@ -490,16 +490,44 @@ namespace ZeroCDN_Client
                     {
                         Id = element.Id,
                         Name = element.Name,
-                        SizeInMB = Math.Round(Double.Parse(element.SizeInMB) / 1024, 2).ToString(),
+                        SizeInMB = element.SizeInMB,
                         DateCreate = element.DateCreate,
                         DirectoryId = element.DirectoryId,
                         Type = element.Type,
-                        PublicLink = $"{UserName}.zerocdn.com/", //требуется редактирование
-                        DirectLink = $"zerocdn.com/{element.Id}/{element.Name}"
+                        PublicLink = element.PublicLink,
+                        DirectLink = element.DirectLink,
                     });
                 }
             }
         }  // Обновление списка файлов в директории
+
+        private String GenerationPublicLink(JToken obj, WebClient client)
+        {
+            String directoryUrl = (String)obj["folder"];
+            String nameDirectory = "";
+
+            while (directoryUrl != null)
+            {
+                String url = "";
+                if (typeAuth == typeAuthorization.LoginAndAPiKey)
+                {
+                    url = $"http://mng.zerocdn.com/api/v2/users/folders/{directoryUrl}.json?username={UserName}&api_key={PasOrKey}";
+                }
+                else
+                {
+                    url = $"http://mng.zerocdn.com/api/v2/users/folders/{directoryUrl}.json";
+                }
+
+                var responseForDirectoryUrl = client.DownloadString(url);
+
+                var jObject2 = JObject.Parse(responseForDirectoryUrl);
+
+                directoryUrl = (String)jObject2["folder"];
+                nameDirectory = '/' + (String)jObject2["name"] + nameDirectory;
+            }
+
+            return nameDirectory;
+        }
 
         private List<FilesFromDirectory> WriteExistingFiles()
         {
@@ -511,7 +539,6 @@ namespace ZeroCDN_Client
             String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileWithKey +
                                                                         "?username=" + UserName +
                                                                         "&api_key=" + PasOrKey : urlFileWithPassword;
-
             try
             {
                 var client = new WebClient();
@@ -521,14 +548,20 @@ namespace ZeroCDN_Client
                 List<FilesFromDirectory> filesFromDirectory = new List<FilesFromDirectory>();
                 foreach (var obj in jObject["objects"])
                 {
+                    String id = (String)obj["id"];
+                    String name = (String)obj["name"];
+                    String directoryId = (String)obj["folder"];
+
                     filesFromDirectory.Add(new FilesFromDirectory
                     {
-                        Id = (String)obj["id"],
-                        Name = (String)obj["name"],
-                        SizeInMB = (String)obj["size"],
+                        Id = id,
+                        Name = name,
+                        SizeInMB = Math.Round(Double.Parse((String)obj["size"]) / 1024, 2).ToString(),
                         Type = (String)obj["content_type"],
                         DateCreate = (String)obj["created"],
-                        DirectoryId = (String)obj["folder"]
+                        DirectoryId = directoryId,
+                        PublicLink = directoryId == null ? "/" : GenerationPublicLink(obj, client),
+                        DirectLink = $"zerocdn.com/{id}/{name}"
                     });
                 }
 
