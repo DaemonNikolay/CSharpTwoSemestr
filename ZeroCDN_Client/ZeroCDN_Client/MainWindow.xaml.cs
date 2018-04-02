@@ -36,11 +36,11 @@ namespace ZeroCDN_Client
             var auth = api.AuthLoginKey(login, password);
             //var auth = api.AuthLoginPassword(login, password);
 
-            if (auth == "429")
+            if (auth ==  "429")
             {
-                MessageBox.Show("Жди пять минут, код 429.");
+                MessageBox.Show("Жди пять минут, слишком много некорректных запросов. \nКод 429.");
             }
-            else if (auth == "403")
+            else if (auth == HttpStatusCode.Forbidden.ToString())
             {
                 MessageBox.Show("Учётные данные пользователя не верны!");
             }
