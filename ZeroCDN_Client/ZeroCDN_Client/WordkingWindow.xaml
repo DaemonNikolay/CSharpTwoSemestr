@@ -37,7 +37,7 @@
                 </Button.Background>
             </Button>
         </ToolBar>
-        <TextBlock x:Name="textBlockTableFilesFromDirectory" HorizontalAlignment="Left" Margin="468,9,0,0" TextWrapping="Wrap" Text="Файлы директории" VerticalAlignment="Top" Height="25" Width="626" TextAlignment="Center" FontWeight="Bold"/>
+        <TextBlock x:Name="textBlockTableFilesFromDirectory" HorizontalAlignment="Left" Margin="468,9,0,0" TextWrapping="Wrap" Text="Файлы директории" VerticalAlignment="Top" Height="25" Width="551" TextAlignment="Center" FontWeight="Bold"/>
         <DataGrid x:Name="TableFilesFromDirectory" HorizontalAlignment="Left" Margin="468,68,0,0" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AllowDrop="True" MouseDoubleClick="TableFilesFromDirectory_MouseDoubleClick" MinHeight="345" MinWidth="626" Height="345"/>
         <ToolBar x:Name="toolBar" HorizontalAlignment="Left" Margin="468,36,0,0" VerticalAlignment="Top" Height="33" Width="626" Background="White">
             <Button x:Name="UploadToServer" Content="" Height="26" VerticalAlignment="Top" Width="33" Cursor="Hand">
@@ -64,5 +64,10 @@
                 </Button.Background>
             </Button>
         </ToolBar>
+        <Button x:Name="Logout" Content="" HorizontalAlignment="Left" Margin="1019,9,0,0" VerticalAlignment="Top" Width="33" Cursor="Hand" Height="26" BorderBrush="{x:Null}" Click="Logout_Click">
+            <Button.Background>
+                <ImageBrush ImageSource="Image/ToolBar/Logout.png" Stretch="Uniform"/>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>

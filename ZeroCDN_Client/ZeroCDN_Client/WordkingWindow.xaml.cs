@@ -279,5 +279,10 @@ namespace ZeroCDN_Client
         {
             ShowingFile_Click(sender, e);
         }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
