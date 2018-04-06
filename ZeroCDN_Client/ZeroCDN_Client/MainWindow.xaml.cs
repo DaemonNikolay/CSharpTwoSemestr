@@ -66,7 +66,7 @@ namespace ZeroCDN_Client
                 }
                 else
                 {
-                    MessageBox.Show($"Error, code {auth}");
+                    MessageBox.Show($"Error: {auth}");
                 }
             }
             else

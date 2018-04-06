@@ -352,5 +352,10 @@ namespace ZeroCDN_Client
                 }
             });
         }
+
+        private void UploadToServer_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
