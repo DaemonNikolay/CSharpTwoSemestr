@@ -282,7 +282,26 @@ namespace ZeroCDN_Client
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
+            String themeMessageBoxText = "Уверены, что желаете покинуть нас?";
+            String titleMessageBox = "...жили долго и счастливо";
 
+            MessageBoxButton buttonMessageBox = MessageBoxButton.YesNo;
+            MessageBoxImage iconMessageBox = MessageBoxImage.Warning;
+
+            MessageBoxResult resultMessageBox = MessageBox.Show(themeMessageBoxText, titleMessageBox, buttonMessageBox, iconMessageBox);
+
+            if(resultMessageBox == MessageBoxResult.Yes)
+            {
+                this.Visibility = Visibility.Collapsed;
+
+                MainWindow wind = new MainWindow();
+                wind.Closed += (sender2, e2) =>
+                {
+                    this.Close();
+                };
+
+                wind.ShowDialog();
+            }
         }
     }
 }

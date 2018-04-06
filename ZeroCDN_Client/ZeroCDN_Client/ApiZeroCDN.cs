@@ -142,6 +142,7 @@ namespace ZeroCDN_Client
 
                 //typeAuth = typeAuthorization.LoginAndAPiKey;
 
+
                 //return Encoding.ASCII.GetString(response);
 
 
