@@ -253,6 +253,35 @@ namespace ZeroCDN_Client
             return Delete(url);
         }
 
+        public async Task<String> UploadFile(String directoryId, String pathToFile)
+        {
+            WebClient client = new WebClient();
+
+            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
+                                     urlFileWithKey +
+                                     "?username=" + this.UserName +
+                                     "&api_key=" + this.PasOrKey : urlFileWithPassword;
+
+            return await Task.Run(() =>
+            {
+                client.Headers[HttpRequestHeader.ContentType] = "";
+
+                var bodyData = new NameValueCollection {
+                    { "folder=", $"{directoryId}" }
+                };
+                client.QueryString = bodyData;
+
+                foreach (var element in client.QueryString.AllKeys)
+                {
+                    MessageBox.Show(element.ToString() + " " + client.QueryString.Get(element.ToString()));
+                }
+
+                var upload = client.UploadFile(url, pathToFile);
+
+                return Encoding.ASCII.GetString(upload);
+            });
+        }
+
         /// <summary>
         /// Взаимодействие с директориями
         /// </summary>
@@ -511,9 +540,6 @@ namespace ZeroCDN_Client
 
         private String GenerationPublicLink(JToken obj, WebClient client)
         {
-
-            http://nikulux.osmium.zerocdn.com/73.png
-
             String directoryUrl = (String)obj["folder"];
 
             if (directoryUrl == null)

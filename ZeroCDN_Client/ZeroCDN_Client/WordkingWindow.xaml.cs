@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +32,6 @@ namespace ZeroCDN_Client
         private List<DirectoryFromServer> markedItemsDirectory = new List<DirectoryFromServer>();
         private List<FilesFromDirectory> markedItemsFiles = new List<FilesFromDirectory>();
 
-        private DirectoryFromServer selectedDirectory;
         private DispatcherTimer timer = null;
 
 
@@ -42,19 +43,6 @@ namespace ZeroCDN_Client
             Loaded += TableDirectoriesServer_Loaded;
 
             TimerIsInternetConnection();
-        }
-
-        private DirectoryFromServer SelectedDirectory
-        {
-            get
-            {
-                return selectedDirectory;
-            }
-
-            set
-            {
-                selectedDirectory = value;
-            }
         }
 
         private void UpdateListFiles()
@@ -353,9 +341,32 @@ namespace ZeroCDN_Client
             });
         }
 
-        private void UploadToServer_Click(object sender, RoutedEventArgs e)
+        private async void UploadToServer_Click(object sender, RoutedEventArgs e)
         {
+            DirectoryFromServer selectDirectory = (DirectoryFromServer)TableDirectoriesServer.SelectedItem;
+            if (selectDirectory == null)
+            {
+                MessageBox.Show("Выберите одну директорию");
 
+                return;
+            }
+
+            var dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                String pathToFile = dialog.FileName;
+
+                var upload = await api.UploadFile(selectDirectory.Id, pathToFile);
+
+                MessageBox.Show(upload);
+            }
         }
+
+
+
+
+        ///
+
+
     }
 }
