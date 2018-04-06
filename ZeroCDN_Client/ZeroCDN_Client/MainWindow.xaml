@@ -19,6 +19,7 @@
         <Button x:Name="SendDataAuth" Content="Авторизоваться" HorizontalAlignment="Center" Margin="0,200,0,0" VerticalAlignment="Center" Width="110" Height="26" Cursor="Hand" Click="SendDataAuth_Click"/>
         <TextBox x:Name="InputAuthLogin" HorizontalAlignment="Center" Margin="0,0,0,180" TextWrapping="Wrap" VerticalAlignment="Center" Width="110" MaxWidth="110" BorderThickness="1"/>
         <TextBlock x:Name="AuthLogin" HorizontalAlignment="Center" Margin="7,30,10.4,264.8" TextWrapping="Wrap" Text="Логин" VerticalAlignment="Center" Height="26" Width="501" FontWeight="Bold" TextOptions.TextFormattingMode="Display" TextAlignment="Center" />
+        <Image x:Name="IsInternetConnection" HorizontalAlignment="Left" Height="26" Margin="482,10,0,0" VerticalAlignment="Top" Width="26" Source="Image/InternetConnection.png"/>
 
     </Grid>
 </Window>

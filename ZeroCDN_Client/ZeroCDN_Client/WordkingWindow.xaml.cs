@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace ZeroCDN_Client
 {
@@ -29,6 +31,18 @@ namespace ZeroCDN_Client
         private List<FilesFromDirectory> markedItemsFiles = new List<FilesFromDirectory>();
 
         private DirectoryFromServer selectedDirectory;
+        private DispatcherTimer timer = null;
+
+
+        public WordkingWindow(ApiZeroCDN api)
+        {
+            this.api = api;
+
+            InitializeComponent();
+            Loaded += TableDirectoriesServer_Loaded;
+
+            TimerIsInternetConnection();
+        }
 
         private DirectoryFromServer SelectedDirectory
         {
@@ -88,14 +102,6 @@ namespace ZeroCDN_Client
 
 
             TableFilesFromDirectory.ItemsSource = listFiles;
-        }
-
-        public WordkingWindow(ApiZeroCDN api)
-        {
-            this.api = api;
-
-            InitializeComponent();
-            Loaded += TableDirectoriesServer_Loaded;
         }
 
         private void TableDirectoriesServer_Loaded(object sender, RoutedEventArgs e)
@@ -290,7 +296,7 @@ namespace ZeroCDN_Client
 
             MessageBoxResult resultMessageBox = MessageBox.Show(themeMessageBoxText, titleMessageBox, buttonMessageBox, iconMessageBox);
 
-            if(resultMessageBox == MessageBoxResult.Yes)
+            if (resultMessageBox == MessageBoxResult.Yes)
             {
                 this.Visibility = Visibility.Collapsed;
 
@@ -302,6 +308,49 @@ namespace ZeroCDN_Client
 
                 wind.ShowDialog();
             }
+        }
+
+
+        private void TimerIsInternetConnection()
+        {
+            timer = new DispatcherTimer();
+
+            timer.Tick += new EventHandler(CorrectImageSource);
+            timer.Interval = new TimeSpan(0, 0, 0, 1, 0);
+
+            timer.Start();
+        }
+
+        private async void CorrectImageSource(object sender, EventArgs e)
+        {
+            if (await ConnectionAvailable() == true)
+            {
+                InternetConnection.Source = new BitmapImage(new Uri("Image/InternetConnection.png", UriKind.Relative));
+            }
+            else
+            {
+                InternetConnection.Source = new BitmapImage(new Uri("Image/NoInternetConnection.png", UriKind.Relative));
+            }
+        }
+
+        private async Task<Boolean> ConnectionAvailable()
+        {
+            Ping ping = new Ping();
+            PingReply pingReply = null;
+
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    pingReply = ping.Send("8.8.8.8");
+
+                    return pingReply.Status == IPStatus.Success ? true : false;
+                }
+                catch (PingException)
+                {
+                    return false;
+                }
+            });
         }
     }
 }
