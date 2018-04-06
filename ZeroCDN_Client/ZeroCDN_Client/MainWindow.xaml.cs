@@ -36,7 +36,7 @@ namespace ZeroCDN_Client
             var auth = api.AuthLoginKey(login, password);
             //var auth = api.AuthLoginPassword(login, password);
 
-            if (auth ==  "429")
+            if (auth == "429")
             {
                 MessageBox.Show("Жди пять минут, слишком много некорректных запросов. \nКод 429.");
             }
@@ -44,14 +44,8 @@ namespace ZeroCDN_Client
             {
                 MessageBox.Show("Учётные данные пользователя не верны!");
             }
-            else if (auth.Length == 3)
+            else if (auth.Contains("{\"meta\":{\"previous\":null,\"next\":null,\"limit\":100,\"offset\":0}"))
             {
-                MessageBox.Show($"Error, code {auth}");
-            }
-            else
-            {
-                MessageBox.Show(auth);
-
                 this.Visibility = Visibility.Collapsed;
 
                 WordkingWindow wind = new WordkingWindow(api);
@@ -61,6 +55,10 @@ namespace ZeroCDN_Client
                 };
 
                 wind.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show($"Error, code {auth}");
             }
         }
     }
