@@ -40,6 +40,7 @@ namespace ZeroCDN_Client
             this.api = api;
 
             InitializeComponent();
+
             Loaded += TableDirectoriesServer_Loaded;
 
             TimerIsInternetConnection();
@@ -47,6 +48,7 @@ namespace ZeroCDN_Client
 
         private void UpdateListFiles()
         {
+
             var selectItem = TableDirectoriesServer.SelectedItem;
             DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
 
@@ -86,13 +88,15 @@ namespace ZeroCDN_Client
                 Binding = new Binding("DirectLink"),
             });
 
-            var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
 
+            var listFiles = api.GetFilesInDirectory(currentDirectory.Id);
 
             TableFilesFromDirectory.ItemsSource = listFiles;
         }
 
-        private void TableDirectoriesServer_Loaded(object sender, RoutedEventArgs e)
+
+
+        private async void TableDirectoriesServer_Loaded(object sender, RoutedEventArgs e)
         {
             TableDirectoriesServer.IsEnabled = true;
             TableDirectoriesServer.AutoGenerateColumns = false;
@@ -110,7 +114,7 @@ namespace ZeroCDN_Client
 
             var listDirectories = api.GetDirectories();
 
-            TableDirectoriesServer.ItemsSource = listDirectories;
+            TableDirectoriesServer.ItemsSource = await listDirectories;
         }
 
         private void TableDirectoriesServer_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -118,7 +122,7 @@ namespace ZeroCDN_Client
 
         }
 
-        private void CreateDirecoryToServer_Click(object sender, RoutedEventArgs e)
+        private async void CreateDirecoryToServer_Click(object sender, RoutedEventArgs e)
         {
             NameForDirectory windowName = new NameForDirectory();
 
@@ -129,10 +133,10 @@ namespace ZeroCDN_Client
 
                 var newDirectory = api.CreateDirectory(name);
 
-                if (newDirectory != "-1")
+                if (await newDirectory != "-1")
                 {
                     TableDirectoriesServer.ItemsSource = null;
-                    TableDirectoriesServer.ItemsSource = api.GetDirectories();
+                    TableDirectoriesServer.ItemsSource = await api.GetDirectories();
 
                     return;
                 }
@@ -141,7 +145,7 @@ namespace ZeroCDN_Client
             }
         }
 
-        private void DeleteDirecoryToServer_Click(object sender, RoutedEventArgs e)
+        private async void DeleteDirecoryToServer_Click(object sender, RoutedEventArgs e)
         {
             foreach (var element in TableDirectoriesServer.SelectedItems)
             {
@@ -155,10 +159,10 @@ namespace ZeroCDN_Client
             markedItemsDirectory.Clear();
 
             TableDirectoriesServer.ItemsSource = null;
-            TableDirectoriesServer.ItemsSource = api.GetDirectories();
+            TableDirectoriesServer.ItemsSource = await api.GetDirectories();
         }
 
-        private void RenameDirectoryToServer_Click(object sender, RoutedEventArgs e)
+        private async void RenameDirectoryToServer_Click(object sender, RoutedEventArgs e)
         {
             var selectItem = TableDirectoriesServer.SelectedItem;
             DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
@@ -175,7 +179,7 @@ namespace ZeroCDN_Client
                 var resultRename = api.RenameDirectory(window.NameDirectory.Text, Convert.ToInt32(currentDirectory.Id));
 
                 TableDirectoriesServer.ItemsSource = null;
-                TableDirectoriesServer.ItemsSource = api.GetDirectories();
+                TableDirectoriesServer.ItemsSource = await api.GetDirectories();
             }
         }
 
@@ -194,11 +198,11 @@ namespace ZeroCDN_Client
 
         }
 
-        private void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
+        private async void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
         {
             var currentDirectories = api.GetDirectories();
 
-            MovingToDirectory window = new MovingToDirectory(currentDirectories);
+            MovingToDirectory window = new MovingToDirectory(await currentDirectories);
 
             var selectItem = TableDirectoriesServer.SelectedItem;
             DirectoryFromServer selectDirectory = (DirectoryFromServer)selectItem;
@@ -206,7 +210,7 @@ namespace ZeroCDN_Client
 
             if (window.ShowDialog() == true)
             {
-                foreach (var element in currentDirectories)
+                foreach (var element in await currentDirectories)
                 {
                     if (element.NameDirectory == window.SelectedDirectoryFromDropDown)
                     {
@@ -219,12 +223,12 @@ namespace ZeroCDN_Client
 
 
                 TableDirectoriesServer.ItemsSource = null;
-                TableDirectoriesServer.ItemsSource = api.GetDirectories();
+                TableDirectoriesServer.ItemsSource = await api.GetDirectories();
             }
 
         }
 
-        private void DeleteFile_Click(object sender, RoutedEventArgs e)
+        private async void DeleteFile_Click(object sender, RoutedEventArgs e)
         {
             foreach (var element in TableFilesFromDirectory.SelectedItems)
             {
@@ -232,14 +236,14 @@ namespace ZeroCDN_Client
             }
             foreach (var element in markedItemsFiles)
             {
-                var resultDelete = api.DeleteFile(Int32.Parse(element.Id));
+                var resultDelete = await api.DeleteFile(Int32.Parse(element.Id));
             }
 
             markedItemsFiles.Clear();
             UpdateListFiles();
         }
 
-        private void RenameFile_Click(object sender, RoutedEventArgs e)
+        private async void RenameFile_Click(object sender, RoutedEventArgs e)
         {
             var selectItem = TableFilesFromDirectory.SelectedItem;
             FilesFromDirectory currentFile = (FilesFromDirectory)selectItem;
@@ -253,7 +257,7 @@ namespace ZeroCDN_Client
             NameForDirectory window = new NameForDirectory();
             if (window.ShowDialog() == true)
             {
-                var resultRename = api.RenameFile(window.NameDirectory.Text, Convert.ToInt32(currentFile.Id));
+                var resultRename = await api.RenameFile(window.NameDirectory.Text, Convert.ToInt32(currentFile.Id));
 
                 UpdateListFiles();
             }

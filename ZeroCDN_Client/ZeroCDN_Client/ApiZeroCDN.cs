@@ -177,52 +177,7 @@ namespace ZeroCDN_Client
             return filesInDirectory;
         }
 
-        public String LoadFileToDirectory(int idDirectory, String pathToFile)
-        {
-            if (pathToFile.Length == 0)
-            {
-                return null;
-            }
-
-            IdToServer = idDirectory.ToString();
-            //if (IsExistDirectoryId())
-            //{
-            //    return "-1";
-            //}
-
-            WebClient client = new WebClient();
-
-            this.IdToServer = idDirectory.ToString();
-
-            NameValueCollection data = new NameValueCollection
-            {
-                { "Content-Type", "application/json" },
-                { "file", "@" + pathToFile },
-                { "folder", IdToServer.ToString() }
-            };
-
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlFileWithKey +
-                                                                        "?username=" + UserName +
-                                                                        "&api_key=" + PasOrKey : urlFileWithPassword;
-
-            try
-            {
-                var response = client.UploadValues(url, data);
-
-                return Encoding.ASCII.GetString(response);
-            }
-            catch (WebException ex)
-            {
-                return GetHttpStatusCode(ex);
-            }
-        }
-
-        public String LoadFileToDirectoryOnLink()
-        {
-            return "-1";
-        }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
-
-        public String RenameFile(String newNameFile, int idCurrentFile)
+        public async Task<String> RenameFile(String newNameFile, int idCurrentFile)
         {
             if (typeAuth.Equals(null))
             {
@@ -237,10 +192,10 @@ namespace ZeroCDN_Client
                                                         "&api_key=" + PasOrKey : urlFileIdWithPassword +
                                                                                  this.IdToServer + ".json"; ;
 
-            return Rename(url, newNameFile);
+            return await Rename(url, newNameFile);
         }
 
-        public String DeleteFile(int id)
+        public async Task<String> DeleteFile(int id)
         {
             IdToServer = id.ToString();
 
@@ -250,7 +205,7 @@ namespace ZeroCDN_Client
                                                         "&api_key=" + this.PasOrKey : urlFileIdWithPassword +
                                                                                       this.IdToServer + ".json";
 
-            return Delete(url);
+            return await Delete(url);
         }
 
         public async Task<String> UploadFile(String directoryId, String pathToFile)
@@ -287,14 +242,14 @@ namespace ZeroCDN_Client
         /// </summary>
         /// 
 
-        internal List<DirectoryFromServer> GetDirectories()
+        internal async Task<List<DirectoryFromServer>> GetDirectories()
         {
-            return GetListDirectories();
+            return await GetListDirectories();
         }
 
-        public String CreateDirectory(String nameNewDirectory)
+        public async Task<String> CreateDirectory(String nameNewDirectory)
         {
-            foreach (var element in GetListDirectories())
+            foreach (var element in await GetListDirectories())
             {
                 if (element.NameDirectory == nameNewDirectory)
                 {
@@ -313,7 +268,7 @@ namespace ZeroCDN_Client
             return AnswerIsCreatingDirectory(data, client);
         }
 
-        public String DeleteDirectory(int id)
+        public async Task<String> DeleteDirectory(int id)
         {
             this.IdToServer = id.ToString();
 
@@ -324,10 +279,10 @@ namespace ZeroCDN_Client
                                      "&api_key=" + PasOrKey : urlDirectoryIdWithPassword +
                                                                    IdToServer + ".json";
 
-            return Delete(url);
+            return await Delete(url);
         }
 
-        public String MovingDirectory(String idDirectoryBegin, String idDirectoryEnd)
+        public async Task<String> MovingDirectory(String idDirectoryBegin, String idDirectoryEnd)
         {
             WebClient client = new WebClient();
 
@@ -338,35 +293,30 @@ namespace ZeroCDN_Client
                                      "&api_key=" + this.PasOrKey : urlDirectoryIdWithPassword +
                                                                    this.IdToServer + ".json";
 
-
             var data = new NameValueCollection
                 {
                     { "Content-Type", "application/json" },
                     { "folder", idDirectoryBegin },
                 };
 
-            try
+            await Task.Run(() =>
             {
-                foreach (var element in data.AllKeys)
+                try
                 {
-                    MessageBox.Show(element + " : " + data.Get(element));
+                    var moving = client.UploadValues(url, "PATCH", data);
+
+                    return Encoding.ASCII.GetString(moving);
                 }
+                catch (WebException ex)
+                {
+                    return GetHttpStatusCode(ex);
+                }
+            });
 
-                MessageBox.Show("URL: " + url);
+            return "-1";
+        }
 
-                var moving = client.UploadValues(url, "PATCH", data);
-
-                MessageBox.Show("mOVING: " + moving);
-
-                return Encoding.ASCII.GetString(moving);
-            }
-            catch (WebException ex)
-            {
-                return GetHttpStatusCode(ex);
-            }
-        }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
-
-        public String RenameDirectory(String newNameDirectory, int idCurrentDirectory)
+        public async Task<String> RenameDirectory(String newNameDirectory, int idCurrentDirectory)
         {
             if (typeAuth.Equals(null))
             {
@@ -382,7 +332,7 @@ namespace ZeroCDN_Client
                                                                                       IdToServer + ".json";
             MessageBox.Show("url: " + url);
 
-            return Rename(url, newNameDirectory);
+            return await Rename(url, newNameDirectory);
         }
 
         /// <summary>
@@ -390,23 +340,28 @@ namespace ZeroCDN_Client
         /// </summary>
         /// 
 
-        private String Delete(String url)
+        private async Task<String> Delete(String url)
         {
             WebClient client = new WebClient();
 
-            try
+            await Task.Run(() =>
             {
-                var delete = client.UploadValues(url, "DELETE", new NameValueCollection());
+                try
+                {
+                    var delete = client.UploadValues(url, "DELETE", new NameValueCollection());
 
-                return Encoding.ASCII.GetString(delete);
-            }
-            catch (WebException ex)
-            {
-                return GetHttpStatusCode(ex);
-            }
+                    return Encoding.ASCII.GetString(delete);
+                }
+                catch (WebException ex)
+                {
+                    return GetHttpStatusCode(ex);
+                }
+            });
+
+            return "-1";
         }  // Общий код удалений
 
-        private String Rename(String url, String newName)
+        private async Task<String> Rename(String url, String newName)
         {
             WebClient client = new WebClient();
 
@@ -416,21 +371,26 @@ namespace ZeroCDN_Client
                     { "name", $"{newName}" },
                 };
 
-            try
+            await Task.Run(() =>
             {
-                var response = client.UploadValues(url, "PATCH", data);
+                try
+                {
+                    var response = client.UploadValues(url, "PATCH", data);
 
-                return Encoding.ASCII.GetString(response);
-            }
-            catch (WebException ex)
-            {
-                return GetHttpStatusCode(ex);
-            }
+                    return Encoding.ASCII.GetString(response);
+                }
+                catch (WebException ex)
+                {
+                    return GetHttpStatusCode(ex);
+                }
+            });
+
+            return "-1";
         }  // Общий код переименований
 
-        private bool IsExistDirectoryName(String newNameDirectory)
+        private async Task<bool> IsExistDirectoryName(String newNameDirectory)
         {
-            foreach (var element in GetListDirectories())
+            foreach (var element in await GetListDirectories())
             {
                 if (element.NameDirectory == newNameDirectory)
                 {
@@ -441,31 +401,34 @@ namespace ZeroCDN_Client
             return false;
         }  // Есть ли директория с таким именем
 
-        private List<DirectoryFromServer> GetListDirectories()
+        private async Task<List<DirectoryFromServer>> GetListDirectories()
         {
-            UpdateListDirectories();
+            await UpdateListDirectories();
 
             return existsDirectories;
         }  // Получение списка директорий 
 
-        private void UpdateListDirectories()
+        private async Task UpdateListDirectories()
         {
-            var newDirectories = WriteExistingDirectories();
-
-            if (newDirectories != null)
+            await Task.Run(() =>
             {
-                existsDirectories.Clear();
+                var newDirectories = WriteExistingDirectories();
 
-                foreach (var element in newDirectories)
+                if (newDirectories != null)
                 {
-                    existsDirectories.Add(new DirectoryFromServer
+                    existsDirectories.Clear();
+
+                    foreach (var element in newDirectories)
                     {
-                        NameDirectory = element.NameDirectory,
-                        DateCreate = element.DateCreate,
-                        Id = element.Id
-                    });
+                        existsDirectories.Add(new DirectoryFromServer
+                        {
+                            NameDirectory = element.NameDirectory,
+                            DateCreate = element.DateCreate,
+                            Id = element.Id
+                        });
+                    }
                 }
-            }
+            });
         }  // Обновление списка директорий
 
         private List<DirectoryFromServer> WriteExistingDirectories()
