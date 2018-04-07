@@ -105,25 +105,28 @@ namespace ZeroCDN_Client
             TableFilesFromDirectory.ItemsSource = listFiles;
         }
 
-        private void TableDirectoriesServer_Loaded(object sender, RoutedEventArgs e)
+        private async void TableDirectoriesServer_Loaded(object sender, RoutedEventArgs e)
         {
-            TableDirectoriesServer.IsEnabled = true;
-            TableDirectoriesServer.AutoGenerateColumns = false;
-
-            TableDirectoriesServer.Columns.Add(new DataGridTextColumn
+            if (await ConnectionAvailable() == true)
             {
-                Header = "Название",
-                Binding = new Binding("NameDirectory"),
-            });
-            TableDirectoriesServer.Columns.Add(new DataGridTextColumn
-            {
-                Header = "Дата создания",
-                Binding = new Binding("DateCreate"),
-            });
+                TableDirectoriesServer.IsEnabled = true;
+                TableDirectoriesServer.AutoGenerateColumns = false;
 
-            var listDirectories = api.GetDirectories();
+                TableDirectoriesServer.Columns.Add(new DataGridTextColumn
+                {
+                    Header = "Название",
+                    Binding = new Binding("NameDirectory"),
+                });
+                TableDirectoriesServer.Columns.Add(new DataGridTextColumn
+                {
+                    Header = "Дата создания",
+                    Binding = new Binding("DateCreate"),
+                });
 
-            TableDirectoriesServer.ItemsSource = listDirectories;
+                var listDirectories = api.GetDirectories();
+
+                TableDirectoriesServer.ItemsSource = listDirectories;
+            }
         }
 
         private void TableDirectoriesServer_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -131,75 +134,90 @@ namespace ZeroCDN_Client
 
         }
 
-        private void CreateDirecoryToServer_Click(object sender, RoutedEventArgs e)
+        private async void CreateDirecoryToServer_Click(object sender, RoutedEventArgs e)
         {
-            NameForDirectory windowName = new NameForDirectory();
-
-            if (windowName.ShowDialog() == true)
+            if (await ConnectionAvailable() == true)
             {
-                var name = windowName.NameDirectory.Text;
-                name = windowName.NameDirectory.Text;
+                NameForDirectory windowName = new NameForDirectory();
 
-                var newDirectory = api.CreateDirectory(name);
-
-                if (newDirectory != "-1")
+                if (windowName.ShowDialog() == true)
                 {
-                    TableDirectoriesServer.ItemsSource = null;
-                    TableDirectoriesServer.ItemsSource = api.GetDirectories();
+                    var name = windowName.NameDirectory.Text;
+                    name = windowName.NameDirectory.Text;
 
-                    return;
+                    var newDirectory = api.CreateDirectory(name);
+
+                    if (newDirectory != "-1")
+                    {
+                        TableDirectoriesServer.ItemsSource = null;
+                        TableDirectoriesServer.ItemsSource = api.GetDirectories();
+
+                        return;
+                    }
+
+                    MessageBox.Show("Выбранное имя уже существует!");
+                }
+            }
+        }
+
+        private async void DeleteDirecoryToServer_Click(object sender, RoutedEventArgs e)
+        {
+            if (await ConnectionAvailable() == true)
+            {
+                foreach (var element in TableDirectoriesServer.SelectedItems)
+                {
+                    markedItemsDirectory.Add((DirectoryFromServer)element);
+                }
+                foreach (var element in markedItemsDirectory)
+                {
+                    var resultDelete = api.DeleteDirectory(Int32.Parse(element.Id));
                 }
 
-                MessageBox.Show("Выбранное имя уже существует!");
-            }
-        }
-
-        private void DeleteDirecoryToServer_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var element in TableDirectoriesServer.SelectedItems)
-            {
-                markedItemsDirectory.Add((DirectoryFromServer)element);
-            }
-            foreach (var element in markedItemsDirectory)
-            {
-                var resultDelete = api.DeleteDirectory(Int32.Parse(element.Id));
-            }
-
-            markedItemsDirectory.Clear();
-
-            TableDirectoriesServer.ItemsSource = null;
-            TableDirectoriesServer.ItemsSource = api.GetDirectories();
-        }
-
-        private void RenameDirectoryToServer_Click(object sender, RoutedEventArgs e)
-        {
-            var selectItem = TableDirectoriesServer.SelectedItem;
-            DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
-
-            if (currentDirectory == null)
-            {
-                MessageBox.Show("Выберите директорию!");
-                return;
-            }
-
-            NameForDirectory window = new NameForDirectory();
-            if (window.ShowDialog() == true)
-            {
-                var resultRename = api.RenameDirectory(window.NameDirectory.Text, Convert.ToInt32(currentDirectory.Id));
+                markedItemsDirectory.Clear();
 
                 TableDirectoriesServer.ItemsSource = null;
                 TableDirectoriesServer.ItemsSource = api.GetDirectories();
             }
         }
 
-        private void TableDirectoriesServer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void RenameDirectoryToServer_Click(object sender, RoutedEventArgs e)
         {
-            UpdateListFiles();
+            if (await ConnectionAvailable() == true)
+            {
+                var selectItem = TableDirectoriesServer.SelectedItem;
+                DirectoryFromServer currentDirectory = (DirectoryFromServer)selectItem;
+
+                if (currentDirectory == null)
+                {
+                    MessageBox.Show("Выберите директорию!");
+                    return;
+                }
+
+                NameForDirectory window = new NameForDirectory();
+                if (window.ShowDialog() == true)
+                {
+                    var resultRename = api.RenameDirectory(window.NameDirectory.Text, Convert.ToInt32(currentDirectory.Id));
+
+                    TableDirectoriesServer.ItemsSource = null;
+                    TableDirectoriesServer.ItemsSource = api.GetDirectories();
+                }
+            }
         }
 
-        private void TableDirectoriesServer_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void TableDirectoriesServer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DragDrop.DoDragDrop(TableDirectoriesServer, TableDirectoriesServer.Items, DragDropEffects.Move);
+            if (await ConnectionAvailable() == true)
+            {
+                UpdateListFiles();
+            }
+        }
+
+        private async void TableDirectoriesServer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (await ConnectionAvailable() == true)
+            {
+                DragDrop.DoDragDrop(TableDirectoriesServer, TableDirectoriesServer.Items, DragDropEffects.Move);
+            }
         }
 
         private void TableDirectoriesServer_Drop(object sender, DragEventArgs e)
@@ -207,107 +225,121 @@ namespace ZeroCDN_Client
 
         }
 
-        private void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
+        private async void MovingDirectoryToServer_Click(object sender, RoutedEventArgs e)
         {
-            var currentDirectories = api.GetDirectories();
-
-            MovingToDirectory window = new MovingToDirectory(currentDirectories);
-
-            var selectItem = TableDirectoriesServer.SelectedItem;
-            DirectoryFromServer selectDirectory = (DirectoryFromServer)selectItem;
-
-
-            if (window.ShowDialog() == true)
+            if (await ConnectionAvailable() == true)
             {
-                foreach (var element in currentDirectories)
-                {
-                    if (element.NameDirectory == window.SelectedDirectoryFromDropDown)
-                    {
-                        var moving = api.MovingDirectory(element.Id, selectDirectory.Id);
+                var currentDirectories = api.GetDirectories();
 
-                        break;
+                MovingToDirectory window = new MovingToDirectory(currentDirectories);
+
+                var selectItem = TableDirectoriesServer.SelectedItem;
+                DirectoryFromServer selectDirectory = (DirectoryFromServer)selectItem;
+
+                if (window.ShowDialog() == true)
+                {
+                    foreach (var element in currentDirectories)
+                    {
+                        if (element.NameDirectory == window.SelectedDirectoryFromDropDown)
+                        {
+                            var moving = api.MovingDirectory(element.Id, selectDirectory.Id);
+
+                            break;
+                        }
                     }
+
+                    TableDirectoriesServer.ItemsSource = null;
+                    TableDirectoriesServer.ItemsSource = api.GetDirectories();
+                }
+            }
+        }
+
+        private async void DeleteFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (await ConnectionAvailable() == true)
+            {
+                foreach (var element in TableFilesFromDirectory.SelectedItems)
+                {
+                    markedItemsFiles.Add(((FilesFromDirectory)element));
+                }
+                foreach (var element in markedItemsFiles)
+                {
+                    var resultDelete = api.DeleteFile(Int32.Parse(element.Id));
                 }
 
-
-
-                TableDirectoriesServer.ItemsSource = null;
-                TableDirectoriesServer.ItemsSource = api.GetDirectories();
-            }
-
-        }
-
-        private void DeleteFile_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var element in TableFilesFromDirectory.SelectedItems)
-            {
-                markedItemsFiles.Add(((FilesFromDirectory)element));
-            }
-            foreach (var element in markedItemsFiles)
-            {
-                var resultDelete = api.DeleteFile(Int32.Parse(element.Id));
-            }
-
-            markedItemsFiles.Clear();
-            UpdateListFiles();
-        }
-
-        private void RenameFile_Click(object sender, RoutedEventArgs e)
-        {
-            var selectItem = TableFilesFromDirectory.SelectedItem;
-            FilesFromDirectory currentFile = (FilesFromDirectory)selectItem;
-
-            if (currentFile == null)
-            {
-                MessageBox.Show("Выберите файл!");
-                return;
-            }
-
-            NameForDirectory window = new NameForDirectory();
-            if (window.ShowDialog() == true)
-            {
-                var resultRename = api.RenameFile(window.NameDirectory.Text, Convert.ToInt32(currentFile.Id));
-
+                markedItemsFiles.Clear();
                 UpdateListFiles();
             }
         }
 
-        private void ShowingFile_Click(object sender, RoutedEventArgs e)
+        private async void RenameFile_Click(object sender, RoutedEventArgs e)
         {
-            var selectItem = TableFilesFromDirectory.SelectedItem;
-            FilesFromDirectory currentFile = (FilesFromDirectory)selectItem;
-
-            ShowingDataFile window = new ShowingDataFile(currentFile.DirectLink);
-
-            window.Show();
-        }
-
-        private void TableFilesFromDirectory_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            ShowingFile_Click(sender, e);
-        }
-
-        private void Logout_Click(object sender, RoutedEventArgs e)
-        {
-            String themeMessageBoxText = "Уверены, что желаете покинуть нас?";
-            String titleMessageBox = "...жили долго и счастливо";
-
-            MessageBoxButton buttonMessageBox = MessageBoxButton.YesNo;
-            MessageBoxImage iconMessageBox = MessageBoxImage.Warning;
-
-            MessageBoxResult resultMessageBox = MessageBox.Show(themeMessageBoxText, titleMessageBox, buttonMessageBox, iconMessageBox);
-
-            if (resultMessageBox == MessageBoxResult.Yes)
+            if (await ConnectionAvailable() == true)
             {
-                this.Visibility = Visibility.Collapsed;
+                var selectItem = TableFilesFromDirectory.SelectedItem;
+                FilesFromDirectory currentFile = (FilesFromDirectory)selectItem;
 
-                MainWindow wind = new MainWindow();
-                wind.Closed += (sender2, e2) =>
+                if (currentFile == null)
                 {
-                    this.Close();
-                };
+                    MessageBox.Show("Выберите файл!");
+                    return;
+                }
 
-                wind.ShowDialog();
+                NameForDirectory window = new NameForDirectory();
+                if (window.ShowDialog() == true)
+                {
+                    var resultRename = api.RenameFile(window.NameDirectory.Text, Convert.ToInt32(currentFile.Id));
+
+                    UpdateListFiles();
+                }
+            }
+        }
+
+        private async void ShowingFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (await ConnectionAvailable() == true)
+            {
+                var selectItem = TableFilesFromDirectory.SelectedItem;
+                FilesFromDirectory currentFile = (FilesFromDirectory)selectItem;
+
+                ShowingDataFile window = new ShowingDataFile(currentFile.DirectLink);
+
+                window.Show();
+            }
+        }
+
+        private async void TableFilesFromDirectory_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (await ConnectionAvailable() == true)
+            {
+                ShowingFile_Click(sender, e);
+            }
+        }
+
+        private async void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            if (await ConnectionAvailable() == true)
+            {
+                String themeMessageBoxText = "Уверены, что желаете покинуть нас?";
+                String titleMessageBox = "...жили долго и счастливо";
+
+                MessageBoxButton buttonMessageBox = MessageBoxButton.YesNo;
+                MessageBoxImage iconMessageBox = MessageBoxImage.Warning;
+
+                MessageBoxResult resultMessageBox = MessageBox.Show(themeMessageBoxText, titleMessageBox, buttonMessageBox, iconMessageBox);
+
+                if (resultMessageBox == MessageBoxResult.Yes)
+                {
+                    this.Visibility = Visibility.Collapsed;
+
+                    MainWindow wind = new MainWindow();
+                    wind.Closed += (sender2, e2) =>
+                    {
+                        this.Close();
+                    };
+
+                    wind.ShowDialog();
+                }
             }
         }
 
@@ -326,11 +358,14 @@ namespace ZeroCDN_Client
         {
             if (await ConnectionAvailable() == true)
             {
-                InternetConnection.Source = new BitmapImage(new Uri("Image/InternetConnection.png", UriKind.Relative));
-            }
-            else
-            {
-                InternetConnection.Source = new BitmapImage(new Uri("Image/NoInternetConnection.png", UriKind.Relative));
+                if (await ConnectionAvailable() == true)
+                {
+                    InternetConnection.Source = new BitmapImage(new Uri("Image/InternetConnection.png", UriKind.Relative));
+                }
+                else
+                {
+                    InternetConnection.Source = new BitmapImage(new Uri("Image/NoInternetConnection.png", UriKind.Relative));
+                }
             }
         }
 
@@ -356,22 +391,25 @@ namespace ZeroCDN_Client
 
         private async void UploadToServer_Click(object sender, RoutedEventArgs e)
         {
-            DirectoryFromServer selectDirectory = (DirectoryFromServer)TableDirectoriesServer.SelectedItem;
-            if (selectDirectory == null)
+            if (await ConnectionAvailable() == true)
             {
-                MessageBox.Show("Выберите одну директорию");
+                DirectoryFromServer selectDirectory = (DirectoryFromServer)TableDirectoriesServer.SelectedItem;
+                if (selectDirectory == null)
+                {
+                    MessageBox.Show("Выберите одну директорию");
 
-                return;
-            }
+                    return;
+                }
 
-            var dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() == true)
-            {
-                String pathToFile = dialog.FileName;
+                var dialog = new OpenFileDialog();
+                if (dialog.ShowDialog() == true)
+                {
+                    String pathToFile = dialog.FileName;
 
-                var upload = await api.UploadFile(selectDirectory.Id, pathToFile);
+                    var upload = await api.UploadFile(selectDirectory.Id, pathToFile);
 
-                MessageBox.Show(upload);
+                    MessageBox.Show(upload);
+                }
             }
         }
     }

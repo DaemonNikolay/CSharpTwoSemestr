@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -217,7 +218,7 @@ namespace ZeroCDN_Client
             }
         }
 
-        public async Task<String> UploadFile(String directoryId, String pathToFile)
+        public Task<String> UploadFile(String directoryId, String pathToFile)
         {
             WebClient client = new WebClient();
 
@@ -233,30 +234,30 @@ namespace ZeroCDN_Client
                 client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
             }
 
-            return await Task.Run(() =>
-            {
-                client.Headers[HttpRequestHeader.ContentType] = "";
+            return Task.Run(() =>
+           {
+               client.Headers[HttpRequestHeader.ContentType] = "";
 
-                var bodyData = new NameValueCollection {
-                    { "folder=", $"{directoryId}" }
-                };
-                client.QueryString = bodyData;
+               var bodyData = new NameValueCollection {
+                   { "folder", $"{directoryId}" }
+               };
+               client.QueryString = bodyData;
 
-                foreach (var element in client.QueryString.AllKeys)
-                {
-                    MessageBox.Show(element.ToString() + " " + client.QueryString.Get(element.ToString()));
-                }
+               //foreach (var element in client.QueryString.AllKeys)
+               //{
+               //    MessageBox.Show(element.ToString() + " " + client.QueryString.Get(element.ToString()));
+               //}
 
-                var upload = client.UploadFile(url, pathToFile);
+               var upload = client.UploadFile(url, pathToFile);
 
-                return Encoding.ASCII.GetString(upload);
-            });
+               return Encoding.ASCII.GetString(upload);
+           });
         }
 
         /// <summary>
         /// Взаимодействие с директориями
         /// </summary>
-        /// 
+
 
         internal List<DirectoryFromServer> GetDirectories()
         {
