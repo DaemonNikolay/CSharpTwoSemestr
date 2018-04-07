@@ -121,5 +121,47 @@ namespace ZeroCDN_Client
                 }
             });
         }
+
+        private async void SendDataAuthPassword_Click(object sender, RoutedEventArgs e)
+        {
+            String login = InputAuthLogin_Copy.Text;
+            String password = InputAuthPassword_Copy.Text;
+
+            MessageBox.Show(login + password);
+
+            var auth = api.AuthLoginPassword(login, password);
+
+            if (await ConnectionAvailable() == true)
+            {
+                if (auth == "429")
+                {
+                    MessageBox.Show("Жди пять минут, слишком много некорректных запросов. \nКод 429.");
+                }
+                else if (auth == HttpStatusCode.Forbidden.ToString())
+                {
+                    MessageBox.Show("Учётные данные пользователя не верны!");
+                }
+                else if (auth.Contains("{\"meta\":{\"previous\":null,\"next\":null,\"limit\":100,\"offset\":0}"))
+                {
+                    this.Visibility = Visibility.Collapsed;
+
+                    WordkingWindow wind = new WordkingWindow(api);
+                    wind.Closed += (sender2, e2) =>
+                    {
+                        this.Close();
+                    };
+
+                    wind.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show($"Error: {auth}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Проверьте подключение к сети интернет");
+            }
+        }
     }
 }

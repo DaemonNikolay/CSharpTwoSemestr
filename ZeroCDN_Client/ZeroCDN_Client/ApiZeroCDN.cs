@@ -137,15 +137,6 @@ namespace ZeroCDN_Client
 
             try
             {
-                //var response = client.UploadValues(urlFileWithKey + "?username=" + UserName + "&api_key=" + PasOrKey,
-                //                                   new NameValueCollection());
-
-                //typeAuth = typeAuthorization.LoginAndAPiKey;
-
-
-                //return Encoding.ASCII.GetString(response);
-
-
                 var response = client.DownloadString(urlFileWithKey + "?username=" + UserName + "&api_key=" + PasOrKey);
 
                 typeAuth = typeAuthorization.LoginAndAPiKey;
@@ -177,7 +168,12 @@ namespace ZeroCDN_Client
             return filesInDirectory;
         }
 
-        public async Task<String> RenameFile(String newNameFile, int idCurrentFile)
+        public String LoadFileToDirectoryOnLink()
+        {
+            return "-1";
+        }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
+
+        public String RenameFile(String newNameFile, int idCurrentFile)
         {
             if (typeAuth.Equals(null))
             {
@@ -186,36 +182,56 @@ namespace ZeroCDN_Client
 
             this.IdToServer = idCurrentFile.ToString();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlFileIdWithKey + this.IdToServer + ".json" +
-                                                        "?username=" + UserName +
-                                                        "&api_key=" + PasOrKey : urlFileIdWithPassword +
-                                                                                 this.IdToServer + ".json"; ;
+            String url;
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                url = urlFileIdWithKey + this.IdToServer + ".json" + "?username=" + UserName + "&api_key=" + PasOrKey;
 
-            return await Rename(url, newNameFile);
+                return Rename(url, newNameFile);
+            }
+            else
+            {
+                url = urlFileIdWithPassword + this.IdToServer + ".json";
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+
+                return Rename(url, newNameFile, credentials);
+            }
         }
 
-        public async Task<String> DeleteFile(int id)
+        public String DeleteFile(int id)
         {
             IdToServer = id.ToString();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlFileIdWithKey + this.IdToServer + ".json" +
-                                                        "?username=" + this.UserName +
-                                                        "&api_key=" + this.PasOrKey : urlFileIdWithPassword +
-                                                                                      this.IdToServer + ".json";
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                String url = urlFileIdWithKey + this.IdToServer + ".json" + "?username=" + this.UserName + "&api_key=" + this.PasOrKey;
 
-            return await Delete(url);
+                return Delete(url);
+            }
+            else
+            {
+                String url = urlFileIdWithPassword + this.IdToServer + ".json";
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+
+                return Delete(url, credentials);
+            }
         }
 
         public async Task<String> UploadFile(String directoryId, String pathToFile)
         {
             WebClient client = new WebClient();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlFileWithKey +
-                                     "?username=" + this.UserName +
-                                     "&api_key=" + this.PasOrKey : urlFileWithPassword;
+            String url;
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                url = urlFileWithKey + "?username=" + this.UserName + "&api_key=" + this.PasOrKey;
+            }
+            else
+            {
+                url = urlFileWithPassword;
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+                client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
+            }
 
             return await Task.Run(() =>
             {
@@ -242,14 +258,14 @@ namespace ZeroCDN_Client
         /// </summary>
         /// 
 
-        internal async Task<List<DirectoryFromServer>> GetDirectories()
+        internal List<DirectoryFromServer> GetDirectories()
         {
-            return await GetListDirectories();
+            return GetListDirectories();
         }
 
-        public async Task<String> CreateDirectory(String nameNewDirectory)
+        public String CreateDirectory(String nameNewDirectory)
         {
-            foreach (var element in await GetListDirectories())
+            foreach (var element in GetListDirectories())
             {
                 if (element.NameDirectory == nameNewDirectory)
                 {
@@ -268,30 +284,42 @@ namespace ZeroCDN_Client
             return AnswerIsCreatingDirectory(data, client);
         }
 
-        public async Task<String> DeleteDirectory(int id)
+        public String DeleteDirectory(int id)
         {
             this.IdToServer = id.ToString();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlDirectoryIdWithKey +
-                                     IdToServer + ".json" +
-                                     "?username=" + UserName +
-                                     "&api_key=" + PasOrKey : urlDirectoryIdWithPassword +
-                                                                   IdToServer + ".json";
+            String url;
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                url = urlDirectoryIdWithKey + IdToServer + ".json" + "?username=" + UserName + "&api_key=" + PasOrKey;
 
-            return await Delete(url);
+                return Delete(url);
+            }
+            else
+            {
+                url = urlDirectoryIdWithPassword + IdToServer + ".json";
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+
+                return Delete(url, credentials);
+            }
         }
 
-        public async Task<String> MovingDirectory(String idDirectoryBegin, String idDirectoryEnd)
+        public String MovingDirectory(String idDirectoryBegin, String idDirectoryEnd)
         {
             WebClient client = new WebClient();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlDirectoryIdWithKey +
-                                     idDirectoryEnd + ".json" +
-                                     "?username=" + this.UserName +
-                                     "&api_key=" + this.PasOrKey : urlDirectoryIdWithPassword +
-                                                                   this.IdToServer + ".json";
+            String url;
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                url = urlDirectoryIdWithKey + idDirectoryEnd + ".json" + "?username=" + this.UserName + "&api_key=" + this.PasOrKey;
+            }
+            else
+            {
+                url = urlDirectoryIdWithPassword + this.IdToServer + ".json";
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+
+                client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
+            }
 
             var data = new NameValueCollection
                 {
@@ -299,24 +327,24 @@ namespace ZeroCDN_Client
                     { "folder", idDirectoryBegin },
                 };
 
-            await Task.Run(() =>
+            try
             {
-                try
+                foreach (var element in data.AllKeys)
                 {
-                    var moving = client.UploadValues(url, "PATCH", data);
-
-                    return Encoding.ASCII.GetString(moving);
+                    MessageBox.Show(element + " : " + data.Get(element));
                 }
-                catch (WebException ex)
-                {
-                    return GetHttpStatusCode(ex);
-                }
-            });
 
-            return "-1";
-        }
+                var moving = client.UploadValues(url, "PATCH", data);
 
-        public async Task<String> RenameDirectory(String newNameDirectory, int idCurrentDirectory)
+                return Encoding.ASCII.GetString(moving);
+            }
+            catch (WebException ex)
+            {
+                return GetHttpStatusCode(ex);
+            }
+        }  // ТРЕБУЕТСЯ РЕАЛИЗАЦИЯ
+
+        public String RenameDirectory(String newNameDirectory, int idCurrentDirectory)
         {
             if (typeAuth.Equals(null))
             {
@@ -325,14 +353,20 @@ namespace ZeroCDN_Client
 
             this.IdToServer = idCurrentDirectory.ToString();
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ?
-                                     urlDirectoryIdWithKey + IdToServer + ".json" +
-                                                             "?username=" + UserName +
-                                                             "&api_key=" + PasOrKey : urlDirectoryIdWithPassword +
-                                                                                      IdToServer + ".json";
-            MessageBox.Show("url: " + url);
+            String url;
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                url = urlDirectoryIdWithKey + IdToServer + ".json" + "?username=" + UserName + "&api_key=" + PasOrKey;
 
-            return await Rename(url, newNameDirectory);
+                return Rename(url, newNameDirectory);
+            }
+            else
+            {
+                url = urlDirectoryIdWithPassword + IdToServer + ".json";
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+
+                return Rename(url, newNameDirectory, credentials);
+            }
         }
 
         /// <summary>
@@ -340,30 +374,35 @@ namespace ZeroCDN_Client
         /// </summary>
         /// 
 
-        private async Task<String> Delete(String url)
+        private String Delete(String url, String credentials = "")
         {
             WebClient client = new WebClient();
 
-            await Task.Run(() =>
+            if (credentials != "")
             {
-                try
-                {
-                    var delete = client.UploadValues(url, "DELETE", new NameValueCollection());
+                client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
+            }
 
-                    return Encoding.ASCII.GetString(delete);
-                }
-                catch (WebException ex)
-                {
-                    return GetHttpStatusCode(ex);
-                }
-            });
+            try
+            {
+                var delete = client.UploadValues(url, "DELETE", new NameValueCollection());
 
-            return "-1";
+                return Encoding.ASCII.GetString(delete);
+            }
+            catch (WebException ex)
+            {
+                return GetHttpStatusCode(ex);
+            }
         }  // Общий код удалений
 
-        private async Task<String> Rename(String url, String newName)
+        private String Rename(String url, String newName, String credentials = "")
         {
             WebClient client = new WebClient();
+
+            if (credentials != "")
+            {
+                client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
+            }
 
             var data = new NameValueCollection
                 {
@@ -371,26 +410,21 @@ namespace ZeroCDN_Client
                     { "name", $"{newName}" },
                 };
 
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    var response = client.UploadValues(url, "PATCH", data);
+                var response = client.UploadValues(url, "PATCH", data);
 
-                    return Encoding.ASCII.GetString(response);
-                }
-                catch (WebException ex)
-                {
-                    return GetHttpStatusCode(ex);
-                }
-            });
-
-            return "-1";
+                return Encoding.ASCII.GetString(response);
+            }
+            catch (WebException ex)
+            {
+                return GetHttpStatusCode(ex);
+            }
         }  // Общий код переименований
 
-        private async Task<bool> IsExistDirectoryName(String newNameDirectory)
+        private bool IsExistDirectoryName(String newNameDirectory)
         {
-            foreach (var element in await GetListDirectories())
+            foreach (var element in GetListDirectories())
             {
                 if (element.NameDirectory == newNameDirectory)
                 {
@@ -401,34 +435,31 @@ namespace ZeroCDN_Client
             return false;
         }  // Есть ли директория с таким именем
 
-        private async Task<List<DirectoryFromServer>> GetListDirectories()
+        private List<DirectoryFromServer> GetListDirectories()
         {
-            await UpdateListDirectories();
+            UpdateListDirectories();
 
             return existsDirectories;
         }  // Получение списка директорий 
 
-        private async Task UpdateListDirectories()
+        private void UpdateListDirectories()
         {
-            await Task.Run(() =>
+            var newDirectories = WriteExistingDirectories();
+
+            if (newDirectories != null)
             {
-                var newDirectories = WriteExistingDirectories();
+                existsDirectories.Clear();
 
-                if (newDirectories != null)
+                foreach (var element in newDirectories)
                 {
-                    existsDirectories.Clear();
-
-                    foreach (var element in newDirectories)
+                    existsDirectories.Add(new DirectoryFromServer
                     {
-                        existsDirectories.Add(new DirectoryFromServer
-                        {
-                            NameDirectory = element.NameDirectory,
-                            DateCreate = element.DateCreate,
-                            Id = element.Id
-                        });
-                    }
+                        NameDirectory = element.NameDirectory,
+                        DateCreate = element.DateCreate,
+                        Id = element.Id
+                    });
                 }
-            });
+            }
         }  // Обновление списка директорий
 
         private List<DirectoryFromServer> WriteExistingDirectories()
@@ -438,15 +469,21 @@ namespace ZeroCDN_Client
                 return null;
             }
 
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey +
-                                                                        "?username=" + this.UserName +
-                                                                        "&api_key=" + this.PasOrKey : urlDirectoryWithPassword;
-
-            //MessageBox.Show("WriteExistingDirectories\n" + (typeAuth == typeAuthorization.LoginAndPassword));
-
-            //try
-            //{
             var client = new WebClient();
+
+            String url;
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                url = urlDirectoryWithKey + "?username=" + this.UserName + "&api_key=" + this.PasOrKey;
+            }
+            else
+            {
+                url = urlDirectoryWithPassword;
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+
+                client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
+            }
+
             var response = client.DownloadString(url);
             var jObject = JObject.Parse(response);
 
@@ -462,11 +499,6 @@ namespace ZeroCDN_Client
             }
 
             return directoriesFromServer;
-            //}
-            //catch (Exception)
-            //{
-            //    return null;
-            //}
         }  // Записывание имеющихся директорий на сервере
 
         private List<FilesFromDirectory> GetListFiles()
@@ -581,9 +613,18 @@ namespace ZeroCDN_Client
 
         private String AnswerIsCreatingDirectory(NameValueCollection data, WebClient client)
         {
-            String url = typeAuth == typeAuthorization.LoginAndAPiKey ? urlDirectoryWithKey +
-                                                                        "?username=" + UserName +
-                                                                        "&api_key=" + PasOrKey : urlDirectoryWithPassword;
+            String url;
+            if (typeAuth == typeAuthorization.LoginAndAPiKey)
+            {
+                url = urlDirectoryWithKey + "?username=" + UserName + "&api_key=" + PasOrKey;
+            }
+            else
+            {
+                url = urlDirectoryWithPassword;
+                String credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(UserName + ":" + PasOrKey));
+
+                client.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
+            }
 
             try
             {
